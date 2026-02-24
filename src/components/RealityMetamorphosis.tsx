@@ -217,8 +217,8 @@ const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }
                 className="absolute inset-0 z-10"
                 initial={{ clipPath: 'circle(0% at 50% 50%)' }}
                 whileInView={{ clipPath: 'circle(150% at 50% 50%)' }}
-                viewport={{ once: true, margin: '-30% 0px' }}
-                transition={{ duration: 1.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                viewport={{ once: true, margin: '-10% 0px' }}
+                transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
             >
                 <img
                     src={section.imgColor.mobile}
@@ -242,8 +242,8 @@ const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }
                 className="absolute bottom-[10%] left-[6%] w-[88%] z-30 pointer-events-auto"
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-30% 0px' }}
-                transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+                viewport={{ once: true, margin: '-10% 0px' }}
+                transition={{ duration: 0.8, delay: 0.7, ease: 'easeOut' }}
             >
                 <h3 className="font-display text-6xl font-bold mb-4 text-brand-cyan tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.6)]">
                     {section.title}
@@ -304,9 +304,12 @@ const RealityMetamorphosis: React.FC = () => {
     // ─── RENDER MÓVIL (< 768px) ────────────────────────────────────────────
     if (isMobile) {
         return (
-            <section id="reality-metamorphosis" className="relative w-full bg-brand-navy">
-                <div className="sticky top-0 z-[100] flex justify-center py-3 bg-brand-navy/80 backdrop-blur-sm">
-                    <DonationButton variant="cyan" />
+            <section id="reality-metamorphosis" className="relative w-full">
+                {/* Botón CTA flotante — contenedor transparente para no generar bloque azul */}
+                <div className="sticky top-0 z-[100] flex justify-center py-3 bg-transparent">
+                    <div className="drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+                        <DonationButton variant="cyan" />
+                    </div>
                 </div>
                 {SECTIONS.map((section) => (
                     <MobileMetamorphosisSection key={section.id} section={section} />
