@@ -1,16 +1,13 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
-
 
 import { useView } from '../context/ViewContext';
 import { FileText, ExternalLink } from 'lucide-react';
 import DonationButton from './ui/DonationButton';
 
 // --- DATA ---
-// Nota: Las imágenes deben estar en /public/assets/brand/seccion-2/ para que estas rutas funcionen directamente.
-// Si están en src/assets, deberían importarse. Asumiremos public por ahora o ajustaremos luego.
 const SECTIONS = [
     {
         id: 'fisica',
@@ -38,7 +35,9 @@ const SECTIONS = [
     }
 ];
 
-// --- SUBKOMPONENTES ---
+// =============================================================================
+// DESKTOP: MetamorphosisSlide (SIN CAMBIOS - Preservado exactamente)
+// =============================================================================
 
 const MetamorphosisSlide = ({
     section,
@@ -51,23 +50,15 @@ const MetamorphosisSlide = ({
     index: number,
     total: number
 }) => {
-    // Calcular el rango de scroll para este slide específico
     const step = 1 / total;
     const start = index * step;
     const end = start + step;
 
-    // Transformaciones basadas en el scroll global
     const { openReport } = useView();
-
-    // Rango normalizado 0-1 para este slide
-    // 0% - 30%: FASE DE IMPACTO
-    // 30% - 70%: FASE DE METAMORFOSIS
-    // 70% - 100%: FASE DE RESOLUCIÓN
 
     const slideProgress = useTransform(scrollYProgress, [start, end], [0, 1]);
     const smoothProgress = useSpring(slideProgress, { stiffness: 50, damping: 20 });
 
-    // Máscara (Clip Path)
     const clipPath = useTransform(
         smoothProgress,
         [0.3, 0.7],
@@ -75,7 +66,6 @@ const MetamorphosisSlide = ({
         { ease: (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t }
     );
 
-    // Opacidades de texto
     const opacityCritical = useTransform(smoothProgress, [0.3, 0.45], [1, 0]);
     const opacityHope = useTransform(smoothProgress, [0.55, 0.7], [0, 1]);
     const scaleHope = useTransform(smoothProgress, [0.55, 0.7], [0.95, 1]);
@@ -84,7 +74,6 @@ const MetamorphosisSlide = ({
 
     return (
         <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
-            {/* Fondo B&N (Base) - Modificadores de Brillo levantado */}
             <div className="absolute inset-0 z-0">
                 <picture>
                     <source media="(max-width: 767px)" srcSet={section.imgBN.mobile} />
@@ -98,7 +87,6 @@ const MetamorphosisSlide = ({
                 <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply" />
             </div>
 
-            {/* Capa Color (Revelada por Mask) */}
             <motion.div
                 className="absolute inset-0 z-10"
                 style={{ clipPath }}
@@ -117,16 +105,10 @@ const MetamorphosisSlide = ({
                 <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay" />
             </motion.div>
 
-            {/* Contenedor Cinematográfico */}
             <div className="absolute inset-0 z-20 pointer-events-none">
-
-                {/* Capa de Protección de Legibilidad (Gradiente Oscuro Base) */}
                 <div className="absolute bottom-0 w-full h-[50vh] bg-gradient-to-t from-black/80 via-black/40 to-transparent z-0 pointer-events-none" />
-
-                {/* Bloque de Texto (Ajustado a <= 40% inferior con margen de respiro) */}
                 <div className="absolute bottom-[12%] md:bottom-[10%] left-[6%] w-[88%] md:w-full max-w-[550px] z-10 text-left flex flex-col justify-end">
 
-                    {/* Texto Crítico */}
                     <motion.div
                         style={{ opacity: opacityCritical, y: yCritical }}
                         className="absolute bottom-0 left-0 w-full z-10"
@@ -139,7 +121,6 @@ const MetamorphosisSlide = ({
                         </p>
                     </motion.div>
 
-                    {/* Texto Esperanza */}
                     <motion.div
                         style={{
                             opacity: opacityHope,
@@ -149,7 +130,6 @@ const MetamorphosisSlide = ({
                         }}
                         className="absolute bottom-0 left-0 w-full origin-bottom-left"
                     >
-                        {/* Botón Relatório Técnico (Reubicado sobre el Título en Móvil) */}
                         {section.id === 'juridica' && (
                             <motion.button
                                 onClick={openReport}
@@ -187,23 +167,143 @@ const MetamorphosisSlide = ({
                         </div>
                     </motion.div>
                 </div>
-
             </div>
         </div>
     );
 };
 
-// --- COMPONENTE PRINCIPAL ---
+// =============================================================================
+// MOBILE: Nuevo componente de scroll natural (Bifurcación V8.2)
+// =============================================================================
+
+const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }) => {
+    const { openReport } = useView();
+
+    return (
+        <div className="relative w-full min-h-screen overflow-hidden" style={{ touchAction: 'pan-y' }}>
+
+            {/* Fondo B&N (Base) */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src={section.imgBN.mobile}
+                    alt={`${section.title} B&N`}
+                    className="w-full h-full object-cover filter grayscale brightness-[1.15] contrast-[1.05]"
+                    loading="lazy"
+                    decoding="async"
+                    width={390}
+                    height={844}
+                />
+                <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply" />
+            </div>
+
+            {/* Capa Color — Auto-revelado vía whileInView */}
+            <motion.div
+                className="absolute inset-0 z-10"
+                initial={{ clipPath: 'circle(0% at 50% 50%)' }}
+                whileInView={{ clipPath: 'circle(150% at 50% 50%)' }}
+                viewport={{ once: true, margin: '-30% 0px' }}
+                transition={{ duration: 1.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+                <img
+                    src={section.imgColor.mobile}
+                    alt={`${section.title} Color`}
+                    className="w-full h-full object-cover brightness-110 saturate-110"
+                    loading="lazy"
+                    decoding="async"
+                    width={390}
+                    height={844}
+                />
+                <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay" />
+            </motion.div>
+
+            {/* Gradiente de protección de lectura */}
+            <div className="absolute inset-0 z-20 pointer-events-none">
+                <div className="absolute bottom-0 w-full h-[55vh] bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+            </div>
+
+            {/* Bloque de texto — Slide-up con delay 0.3s */}
+            <motion.div
+                className="absolute bottom-[10%] left-[6%] w-[88%] z-30 pointer-events-auto"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-30% 0px' }}
+                transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+            >
+                <h3 className="font-display text-6xl font-bold mb-4 text-brand-cyan tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.6)]">
+                    {section.title}
+                </h3>
+
+                {section.id === 'juridica' && (
+                    <button
+                        onClick={openReport}
+                        className="mb-4 flex items-center gap-3 bg-brand-navy/60 backdrop-blur-sm
+                                   border border-brand-cyan/30 rounded-lg p-3 w-[220px] text-left
+                                   hover:bg-brand-navy/80 transition-colors group shadow-lg shadow-black/40"
+                    >
+                        <div className="p-2 rounded-lg bg-brand-cyan/10">
+                            <FileText className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="text-brand-cyan text-[10px] font-bold uppercase tracking-wide mb-0.5">
+                                Relatório Técnico
+                            </h4>
+                            <p className="text-white/70 text-[9px] leading-tight line-clamp-1">
+                                Dados da nossa luta no SUS.
+                            </p>
+                        </div>
+                        <ExternalLink className="w-3 h-3 text-brand-cyan/50 group-hover:text-brand-cyan transition-colors" />
+                    </button>
+                )}
+
+                <div className="bg-brand-navy/65 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-2xl">
+                    <p className="font-body text-lg leading-relaxed text-white font-medium border-l-4 border-brand-cyan pl-5">
+                        {section.hopeText}
+                    </p>
+                </div>
+            </motion.div>
+        </div>
+    );
+};
+
+// =============================================================================
+// COMPONENTE PRINCIPAL — Bifurcación Desktop / Mobile
+// =============================================================================
 
 const RealityMetamorphosis: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const [isMobile, setIsMobile] = useState(false);
 
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 767px)');
+        setIsMobile(mq.matches);
+        const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+        mq.addEventListener('change', handler);
+        return () => mq.removeEventListener('change', handler);
+    }, []);
+
+    // useScroll se llama incondicionalmente (reglas de hooks React)
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end end"]
     });
 
+    // ─── RENDER MÓVIL (< 768px) ────────────────────────────────────────────
+    if (isMobile) {
+        return (
+            <section id="reality-metamorphosis" className="relative w-full bg-brand-navy">
+                {/* Botón CTA fijo en móvil */}
+                <div className="sticky top-0 z-[100] flex justify-center py-3 bg-brand-navy/80 backdrop-blur-sm">
+                    <DonationButton variant="cyan" />
+                </div>
 
+                {SECTIONS.map((section) => (
+                    <MobileMetamorphosisSection key={section.id} section={section} />
+                ))}
+            </section>
+        );
+    }
+
+    // ─── RENDER DESKTOP (>= 768px) — SIN CAMBIOS ──────────────────────────
     return (
         <section id="reality-metamorphosis" ref={containerRef} className="relative w-full h-[900vh] bg-brand-navy">
 
@@ -216,10 +316,6 @@ const RealityMetamorphosis: React.FC = () => {
                         const step = 1 / SECTIONS.length;
                         const start = index * step;
 
-
-                        // Opacidad para transicionar entre slides
-                        // Fluidity Patch: First slide fades in during [0, 0.05] (positive offset)
-                        // Others fade in during [start-0.05, start] (original memory)
                         const fadeStart = index === 0 ? 0 : start - 0.05;
                         const fadeEnd = index === 0 ? 0.05 : start;
 
@@ -254,7 +350,7 @@ const RealityMetamorphosis: React.FC = () => {
                     <DonationButton variant="cyan" />
                 </div>
 
-                {/* Scroll Indicator Integrado */}
+                {/* Scroll Indicator */}
                 <motion.div
                     style={{ opacity: useTransform(scrollYProgress, [0.9, 0.95], [1, 0]) }}
                     className="absolute top-[88px] left-1/2 -translate-x-1/2 md:bottom-8 md:right-8 md:top-auto md:left-auto md:translate-x-0 z-[100] flex flex-col items-center gap-1 pointer-events-none"
@@ -275,7 +371,7 @@ const RealityMetamorphosis: React.FC = () => {
 
             </div>
 
-        </section >
+        </section>
     );
 };
 
