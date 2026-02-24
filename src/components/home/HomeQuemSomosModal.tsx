@@ -62,6 +62,10 @@ export default function HomeQuemSomosModal({ isOpen, onClose }: HomeQuemSomosMod
                                     alt="Muro del Instituto"
                                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
                                     style={{ objectPosition: '75% 50%' }}
+                                    loading="lazy"
+                                    decoding="async"
+                                    width={420}
+                                    height={550}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-50% to-azure-deep"></div>
                                 <motion.div
@@ -127,6 +131,10 @@ export default function HomeQuemSomosModal({ isOpen, onClose }: HomeQuemSomosMod
                                     src="/assets/brand/home/lau.png"
                                     alt="Ilustração Laura e Valquíria"
                                     className="absolute inset-0 w-full h-full object-contain object-bottom"
+                                    loading="lazy"
+                                    decoding="async"
+                                    width={250}
+                                    height={600}
                                 />
                             </div>
                         </motion.div>

@@ -109,6 +109,10 @@ export default function HomeBentoGrid() {
                                             src={item.image}
                                             alt={item.title}
                                             className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out ${isActive ? 'grayscale-0' : 'grayscale group-hover:grayscale-0 group-active:grayscale-0'}`}
+                                            loading="lazy"
+                                            decoding="async"
+                                            width={800}
+                                            height={600}
                                         />
                                     </motion.div>
                                 </div>

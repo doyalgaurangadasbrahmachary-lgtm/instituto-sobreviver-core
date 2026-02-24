@@ -106,6 +106,10 @@ export default function HomeServices() {
                                         src={service.image}
                                         alt={service.title}
                                         className={`absolute inset-0 w-full h-full object-cover ${service.className} transition-all duration-700 ${isActive ? 'grayscale-0 scale-110' : 'grayscale group-hover:grayscale-0 group-hover:scale-110'}`}
+                                        loading="lazy"
+                                        decoding="async"
+                                        width={600}
+                                        height={320}
                                     />
                                 </div>
                                 <div className="p-8">

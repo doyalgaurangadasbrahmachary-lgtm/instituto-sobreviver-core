@@ -77,6 +77,11 @@ export default function HomeHeroMobile() {
                         className="w-full h-auto object-contain pointer-events-auto"
                         draggable={false}
                         onLoad={() => setIsLogoLoaded(true)}
+                        fetchPriority="high"
+                        loading="eager"
+                        decoding="sync"
+                        width={280}
+                        height={280}
                     />
                 </div>
 

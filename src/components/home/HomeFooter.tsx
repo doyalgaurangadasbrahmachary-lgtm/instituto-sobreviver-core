@@ -27,6 +27,10 @@ export default function HomeFooter() {
                             src="/assets/brand/home/rostro logo.png"
                             alt="Instituto Sobre'Viver"
                             className="w-full h-full object-contain"
+                            loading="lazy"
+                            decoding="async"
+                            width={160}
+                            height={160}
                         />
                     </motion.div>
 

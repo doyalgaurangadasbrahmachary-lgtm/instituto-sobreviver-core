@@ -110,6 +110,8 @@ const MetamorphosisSlide = ({
                         src={section.imgColor.desktop}
                         alt={`${section.title} Color`}
                         className="w-full h-full object-cover brightness-110 saturate-110"
+                        loading="lazy"
+                        decoding="async"
                     />
                 </picture>
                 <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay" />

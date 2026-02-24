@@ -126,8 +126,13 @@ export default function HomeHeroDesktop() {
                     <img
                         src="/assets/brand/home/logo.png"
                         alt="Instituto Sobre'Viver Logo"
-                        className="w-[221px] md:w-[394px] h-auto object-contain drop-shadow-2xl"
+                        className="w-[236px] md:w-[422px] h-auto object-contain drop-shadow-2xl"
                         draggable={false}
+                        fetchPriority="high"
+                        loading="eager"
+                        decoding="sync"
+                        width={422}
+                        height={422}
                     />
                 </div>
 

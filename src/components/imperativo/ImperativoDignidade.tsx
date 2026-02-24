@@ -79,6 +79,10 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
                   src="/assets/brand/donation/documento-imagenes/panorama-de-divinopolis.png"
                   alt="Panorama de Divinópolis"
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  width={800}
+                  height={500}
                 />
               </div>
             </div>
@@ -132,6 +136,10 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
                   src="/assets/brand/donation/documento-imagenes/ambientes-hospitalares-pyb.png"
                   alt="Ambientes Hospitalares"
                   className="aspect-[4/5] w-full object-cover rounded-2xl border border-white/10 opacity-60 mix-blend-overlay"
+                  loading="lazy"
+                  decoding="async"
+                  width={400}
+                  height={500}
                 />
               </div>
             </div>
@@ -180,6 +188,10 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
                     src="/assets/brand/donation/documento-imagenes/cuidados-domiciliares.png"
                     alt="Cuidados Domiciliares"
                     className="aspect-video w-full object-cover border border-gray-100 rounded-2xl shadow-md"
+                    loading="lazy"
+                    decoding="async"
+                    width={700}
+                    height={393}
                   />
                 </div>
               </div>
