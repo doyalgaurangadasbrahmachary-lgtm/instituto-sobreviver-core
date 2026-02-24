@@ -297,6 +297,10 @@ const RealityMetamorphosis: React.FC = () => {
         offset: ['start start', 'end end'],
     });
 
+    // ✅ FIX V8.5: Todos los useTransform DEBEN estar aquí, antes de cualquier
+    // return condicional. Nunca dentro de un if/else o JSX inline.
+    const scrollIndicatorOpacity = useTransform(scrollYProgress, [0.9, 0.95], [1, 0]);
+
     // ─── RENDER MÓVIL (< 768px) ────────────────────────────────────────────
     if (isMobile) {
         return (
@@ -334,7 +338,7 @@ const RealityMetamorphosis: React.FC = () => {
                 </div>
 
                 <motion.div
-                    style={{ opacity: useTransform(scrollYProgress, [0.9, 0.95], [1, 0]) }}
+                    style={{ opacity: scrollIndicatorOpacity }}
                     className="absolute top-[88px] left-1/2 -translate-x-1/2 md:bottom-8 md:right-8 md:top-auto md:left-auto md:translate-x-0 z-[100] flex flex-col items-center gap-1 pointer-events-none"
                 >
                     <motion.p
