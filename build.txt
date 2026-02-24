@@ -1,0 +1,17 @@
+﻿src/components/DonationForm.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/DonationForm.tsx(1,35): error TS6133: 'useOptimistic' is declared but its value is never read.
+src/components/DonationForm.tsx(1,50): error TS6133: 'startTransition' is declared but its value is never read.
+src/components/DonationForm.tsx(1,67): error TS6133: 'Suspense' is declared but its value is never read.
+src/components/DonationForm.tsx(4,1): error TS6133: 'Payment' is declared but its value is never read.
+src/components/DonationForm.tsx(24,33): error TS6133: 'formData' is declared but its value is never read.
+src/components/imperativo/Charts.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/components/imperativo/Charts.tsx(34,11): error TS2322: Type '(value: number) => [number, "├ôbitos"]' is not assignable to type 'Formatter<number, "├ôbitos"> & ((value: number, name: "├ôbitos", item: Payload<number, "├ôbitos">, index: number, payload: Payload<number, "├ôbitos">[]) => ReactNode | [...])'.
+  Type '(value: number) => [number, "├ôbitos"]' is not assignable to type 'Formatter<number, "├ôbitos">'.
+    Types of parameters 'value' and 'value' are incompatible.
+      Type 'number | undefined' is not assignable to type 'number'.
+        Type 'undefined' is not assignable to type 'number'.
+src/components/imperativo/Charts.tsx(73,11): error TS2322: Type '(value: number) => [string, "Impacto"]' is not assignable to type 'Formatter<number, "Impacto"> & ((value: number, name: "Impacto", item: Payload<number, "Impacto">, index: number, payload: Payload<number, "Impacto">[]) => ReactNode | [...])'.
+  Type '(value: number) => [string, "Impacto"]' is not assignable to type 'Formatter<number, "Impacto">'.
+    Types of parameters 'value' and 'value' are incompatible.
+      Type 'number | undefined' is not assignable to type 'number'.
+        Type 'undefined' is not assignable to type 'number'.

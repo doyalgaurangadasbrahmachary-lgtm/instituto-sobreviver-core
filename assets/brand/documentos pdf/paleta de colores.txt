@@ -1,0 +1,5 @@
+paleta de colores 
+amarelo claro: #f1f1ea
+azure: #24526e 
+azure: #34bbce
+branco: #ffffff

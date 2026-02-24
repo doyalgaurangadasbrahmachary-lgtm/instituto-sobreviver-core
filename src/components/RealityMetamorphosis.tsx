@@ -1,0 +1,280 @@
+'use client';
+
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
+
+
+import { useView } from '../context/ViewContext';
+import { FileText, ExternalLink } from 'lucide-react';
+import DonationButton from './ui/DonationButton';
+
+// --- DATA ---
+// Nota: Las imágenes deben estar en /public/assets/brand/seccion-2/ para que estas rutas funcionen directamente.
+// Si están en src/assets, deberían importarse. Asumiremos public por ahora o ajustaremos luego.
+const SECTIONS = [
+    {
+        id: 'fisica',
+        title: 'Física',
+        imgBN: { desktop: '/assets/brand/donation/seccion-2/Sec_1_BN.png', mobile: '/assets/brand/donation/metamorfosis-movil/1.1.png' },
+        imgColor: { desktop: '/assets/brand/donation/seccion-2/Sec_1_Color.png', mobile: '/assets/brand/donation/metamorfosis-movil/1.2.png' },
+        criticalText: "Em Divinópolis, as mortes por câncer cresceram 54% na última década. O sistema ignora a dor de quem não pode esperar.",
+        hopeText: "O Instituto oferece alívio integral. Com Ozonioterapia e terapias especializadas, garantimos que a dignidade vença a dor física."
+    },
+    {
+        id: 'social',
+        title: 'Social',
+        imgBN: { desktop: '/assets/brand/donation/seccion-2/Sec_2_BN.png', mobile: '/assets/brand/donation/metamorfosis-movil/2.1.png' },
+        imgColor: { desktop: '/assets/brand/donation/seccion-2/cambiarescena.png', mobile: '/assets/brand/donation/metamorfosis-movil/2.2.png' },
+        criticalText: "Minas Gerais possui apenas 71 leitos paliativos para 21 milhões de pessoas. O abandono institucional é a regra nos desertos assistenciais.",
+        hopeText: "Somos uma Comunidade Paliativista. Mais de 370 pessoas já foram resgatadas do isolamento para um ambiente de amor e presença ativa."
+    },
+    {
+        id: 'juridica',
+        title: 'Jurídica',
+        imgBN: { desktop: '/assets/brand/donation/seccion-2/Sec_3_BN.png', mobile: '/assets/brand/donation/metamorfosis-movil/3.1.png' },
+        imgColor: { desktop: '/assets/brand/donation/seccion-2/Sec_3_Color.png', mobile: '/assets/brand/donation/metamorfosis-movil/3.2.png' },
+        criticalText: "A burocracia e o descaso bloqueiam o acesso a remédios vitais. Pacientes terminais são tratados como números em procesos lentos.",
+        hopeText: "Justiça que cura. Já asseguramos R$ 384.000 em bloqueios judiciais para garantir medicamentos de alto custo e dignidade."
+    }
+];
+
+// --- SUBKOMPONENTES ---
+
+const MetamorphosisSlide = ({
+    section,
+    scrollYProgress,
+    index,
+    total,
+}: {
+    section: typeof SECTIONS[0],
+    scrollYProgress: MotionValue<number>,
+    index: number,
+    total: number
+}) => {
+    // Calcular el rango de scroll para este slide específico
+    const step = 1 / total;
+    const start = index * step;
+    const end = start + step;
+
+    // Transformaciones basadas en el scroll global
+    const { openReport } = useView();
+
+    // Rango normalizado 0-1 para este slide
+    // 0% - 30%: FASE DE IMPACTO
+    // 30% - 70%: FASE DE METAMORFOSIS
+    // 70% - 100%: FASE DE RESOLUCIÓN
+
+    const slideProgress = useTransform(scrollYProgress, [start, end], [0, 1]);
+    const smoothProgress = useSpring(slideProgress, { stiffness: 50, damping: 20 });
+
+    // Máscara (Clip Path)
+    const clipPath = useTransform(
+        smoothProgress,
+        [0.3, 0.7],
+        ['circle(0% at 50% 50%)', 'circle(150% at 50% 50%)'],
+        { ease: (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t }
+    );
+
+    // Opacidades de texto
+    const opacityCritical = useTransform(smoothProgress, [0.3, 0.45], [1, 0]);
+    const opacityHope = useTransform(smoothProgress, [0.55, 0.7], [0, 1]);
+    const scaleHope = useTransform(smoothProgress, [0.55, 0.7], [0.95, 1]);
+    const yCritical = useTransform(smoothProgress, [0.3, 0.45], [0, -20]);
+    const yHope = useTransform(smoothProgress, [0.55, 0.7], [20, 0]);
+
+    return (
+        <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden">
+            {/* Fondo B&N (Base) - Modificadores de Brillo levantado */}
+            <div className="absolute inset-0 z-0">
+                <picture>
+                    <source media="(max-width: 767px)" srcSet={section.imgBN.mobile} />
+                    <source media="(min-width: 768px)" srcSet={section.imgBN.desktop} />
+                    <motion.img
+                        src={section.imgBN.desktop}
+                        alt={`${section.title} B&N`}
+                        className="w-full h-full object-cover filter grayscale brightness-[1.15] contrast-[1.05] transition-transform duration-[2s] ease-out"
+                    />
+                </picture>
+                <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply" />
+            </div>
+
+            {/* Capa Color (Revelada por Mask) */}
+            <motion.div
+                className="absolute inset-0 z-10"
+                style={{ clipPath }}
+            >
+                <picture>
+                    <source media="(max-width: 767px)" srcSet={section.imgColor.mobile} />
+                    <source media="(min-width: 768px)" srcSet={section.imgColor.desktop} />
+                    <img
+                        src={section.imgColor.desktop}
+                        alt={`${section.title} Color`}
+                        className="w-full h-full object-cover brightness-110 saturate-110"
+                    />
+                </picture>
+                <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay" />
+            </motion.div>
+
+            {/* Contenedor Cinematográfico */}
+            <div className="absolute inset-0 z-20 pointer-events-none">
+
+                {/* Capa de Protección de Legibilidad (Gradiente Oscuro Base) */}
+                <div className="absolute bottom-0 w-full h-[50vh] bg-gradient-to-t from-black/80 via-black/40 to-transparent z-0 pointer-events-none" />
+
+                {/* Bloque de Texto (Ajustado a <= 40% inferior con margen de respiro) */}
+                <div className="absolute bottom-[12%] md:bottom-[10%] left-[6%] w-[88%] md:w-full max-w-[550px] z-10 text-left flex flex-col justify-end">
+
+                    {/* Texto Crítico */}
+                    <motion.div
+                        style={{ opacity: opacityCritical, y: yCritical }}
+                        className="absolute bottom-0 left-0 w-full z-10"
+                    >
+                        <h3 className="font-display text-6xl md:text-9xl font-bold mb-4 md:mb-6 text-white md:text-white/40 tracking-tighter leading-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] md:drop-shadow-none">
+                            {section.title}
+                        </h3>
+                        <p className="font-body text-lg md:text-3xl leading-relaxed text-white border-l-4 border-red-500/50 pl-6 md:pl-8 font-light drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                            {section.criticalText}
+                        </p>
+                    </motion.div>
+
+                    {/* Texto Esperanza */}
+                    <motion.div
+                        style={{
+                            opacity: opacityHope,
+                            y: yHope,
+                            scale: scaleHope,
+                            willChange: "transform, opacity"
+                        }}
+                        className="absolute bottom-0 left-0 w-full origin-bottom-left"
+                    >
+                        {/* Botón Relatório Técnico (Reubicado sobre el Título en Móvil) */}
+                        {section.id === 'juridica' && (
+                            <motion.button
+                                onClick={openReport}
+                                className="mb-2 md:absolute md:bottom-full md:mb-12 md:left-0 md:top-auto pointer-events-auto
+                                            flex items-center gap-3 md:gap-4 bg-brand-navy/30 md:bg-brand-navy/60 backdrop-blur-sm md:backdrop-blur-md 
+                                            border border-brand-cyan/20 md:border-brand-cyan/30 rounded-lg md:rounded-xl p-2 md:p-4 w-[220px] md:w-[320px] text-left
+                                            hover:bg-brand-navy/50 md:hover:bg-brand-navy/80 transition-colors group shadow-lg shadow-black/30 md:shadow-black/50 origin-bottom-left"
+                            >
+                                <div className="p-2 md:p-3 rounded-lg bg-brand-cyan/10">
+                                    <FileText className="w-4 h-4 md:w-6 md:h-6 text-white" />
+                                </div>
+                                <div className="flex-1">
+                                    <h4 className="text-brand-cyan text-[10px] md:text-sm font-bold uppercase tracking-wide mb-0.5 md:mb-1">
+                                        Relatório Técnico
+                                    </h4>
+                                    <p className="text-white/70 text-[9px] md:text-xs leading-tight md:leading-snug hidden md:block">
+                                        Conheça os dados por trás da nossa luta pela dignidade no SUS.
+                                    </p>
+                                    <p className="text-white/70 text-[9px] md:hidden leading-tight line-clamp-1">
+                                        Dados da nossa luta no SUS.
+                                    </p>
+                                </div>
+                                <ExternalLink className="w-3 h-3 md:w-4 md:h-4 text-brand-cyan/50 group-hover:text-brand-cyan transition-colors" />
+                            </motion.button>
+                        )}
+
+                        <h3 className="font-display text-6xl md:text-9xl font-bold mb-3 md:mb-4 text-brand-cyan tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                            {section.title}
+                        </h3>
+
+                        <div className="bg-brand-navy/60 md:bg-brand-navy/50 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/10 shadow-2xl">
+                            <p className="font-body text-lg md:text-2xl leading-relaxed text-white font-medium border-l-4 border-brand-cyan pl-5 md:pl-6 text-shadow-sm">
+                                {section.hopeText}
+                            </p>
+                        </div>
+                    </motion.div>
+                </div>
+
+            </div>
+        </div>
+    );
+};
+
+// --- COMPONENTE PRINCIPAL ---
+
+const RealityMetamorphosis: React.FC = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"]
+    });
+
+
+    return (
+        <section id="reality-metamorphosis" ref={containerRef} className="relative w-full h-[900vh] bg-brand-navy">
+
+            {/* Sticky Viewport */}
+            <div className="sticky top-0 w-full h-screen overflow-hidden">
+
+                {/* Contenedor de Slides */}
+                <div className="relative w-full h-full">
+                    {SECTIONS.map((section, index) => {
+                        const step = 1 / SECTIONS.length;
+                        const start = index * step;
+
+
+                        // Opacidad para transicionar entre slides
+                        // Fluidity Patch: First slide fades in during [0, 0.05] (positive offset)
+                        // Others fade in during [start-0.05, start] (original memory)
+                        const fadeStart = index === 0 ? 0 : start - 0.05;
+                        const fadeEnd = index === 0 ? 0.05 : start;
+
+                        const sectionOpacity = useTransform(
+                            scrollYProgress,
+                            [fadeStart, fadeEnd],
+                            [0, 1]
+                        );
+
+                        return (
+                            <motion.div
+                                key={section.id}
+                                className="absolute inset-0 w-full h-full"
+                                style={{
+                                    zIndex: index * 10,
+                                    opacity: index === 0 ? 1 : sectionOpacity
+                                }}
+                            >
+                                <MetamorphosisSlide
+                                    section={section}
+                                    scrollYProgress={scrollYProgress}
+                                    index={index}
+                                    total={SECTIONS.length}
+                                />
+                            </motion.div>
+                        );
+                    })}
+                </div>
+
+                {/* Botón CTA Fijo */}
+                <div className="absolute top-8 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:top-6 md:right-6 z-[100] block pointer-events-auto">
+                    <DonationButton variant="cyan" />
+                </div>
+
+                {/* Scroll Indicator Integrado */}
+                <motion.div
+                    style={{ opacity: useTransform(scrollYProgress, [0.9, 0.95], [1, 0]) }}
+                    className="absolute top-[88px] left-1/2 -translate-x-1/2 md:bottom-8 md:right-8 md:top-auto md:left-auto md:translate-x-0 z-[100] flex flex-col items-center gap-1 pointer-events-none"
+                >
+                    <motion.p
+                        animate={{ opacity: [0.3, 1, 0.3] }}
+                        transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+                        className="text-brand-cyan text-[10px] md:text-xs tracking-widest uppercase drop-shadow-md"
+                    >
+                        Desliza para transformar
+                    </motion.p>
+                    <motion.div
+                        animate={{ y: [0, 4, 0] }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                        className="w-[2px] h-6 rounded-full bg-gradient-to-b from-brand-cyan to-transparent"
+                    />
+                </motion.div>
+
+            </div>
+
+        </section >
+    );
+};
+
+export default RealityMetamorphosis;

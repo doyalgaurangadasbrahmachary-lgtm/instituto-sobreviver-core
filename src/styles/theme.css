@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .touch-pan-y {
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Properties for performance animation */
+@property --color-brand-cream {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #f1f1ea;
+}
+
+@property --color-brand-navy {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #24526e;
+}
+
+@property --color-brand-cyan {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #34bbce;
+}
+
+@property --color-brand-white {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #ffffff;
+}
+
+@theme {
+  /* Brand Palette (OKLCH) */
+  --color-brand-cream: oklch(0.95 0.02 105);
+  --color-brand-navy: oklch(0.40 0.08 240);
+  --color-brand-cyan: oklch(0.70 0.15 240);
+  --color-brand-white: oklch(1.0 0 0);
+
+  /* Semantic Colors */
+  --color-background: var(--color-brand-cream);
+  --color-foreground: var(--color-brand-navy);
+  --color-primary: var(--color-brand-navy);
+  --color-secondary: var(--color-brand-cyan);
+
+  /* Typography */
+  --font-display: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+
+  /* Spacing & Radius */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+
+  /* Custom Colors for Donation Button */
+  --color-brand-yellow: #ffbd59;
+
+  /* Home Design System Colors */
+  --color-azure-deep: #24526e;
+  --color-azure-vibrant: #34bbce;
+  --color-bone: #f1f1ea;
+
+  /* Home Font */
+  --font-outfit: "Outfit", sans-serif;
+
+  /* Keyframes for Pulse Animations */
+  @keyframes pulse-yellow {
+
+    0%,
+    100% {
+      background-color: transparent;
+      color: var(--color-brand-yellow);
+      border-color: var(--color-brand-yellow);
+      text-shadow: none;
+    }
+
+    50% {
+      background-color: var(--color-brand-yellow);
+      color: var(--color-brand-navy);
+      border-color: var(--color-brand-yellow);
+      text-shadow: none;
+      box-shadow: 0 0 15px rgba(255, 189, 89, 0.6);
+    }
+  }
+
+  @keyframes pulse-cyan {
+
+    0%,
+    100% {
+      background-color: transparent;
+      color: white;
+      border-color: var(--color-brand-cyan);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+      /* Sombra solo en texto blanco */
+    }
+
+    50% {
+      background-color: var(--color-brand-cyan);
+      color: var(--color-brand-navy);
+      border-color: var(--color-brand-cyan);
+      text-shadow: none;
+      /* Sin sombra en estado sólido */
+      box-shadow: 0 0 15px rgba(52, 187, 206, 0.6);
+    }
+  }
+
+  @keyframes pulse-navy {
+
+    0%,
+    100% {
+      background-color: transparent;
+      color: var(--color-brand-navy);
+      border-color: var(--color-brand-navy);
+    }
+
+    50% {
+      background-color: var(--color-brand-navy);
+      color: white;
+      border-color: var(--color-brand-navy);
+      box-shadow: 0 0 15px rgba(36, 82, 110, 0.4);
+    }
+  }
+}
+
+/* Base Styles */
+html {}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* Home Font Isolation */
+.font-outfit {
+  font-family: var(--font-outfit);
+}
+
+.font-outfit h1,
+.font-outfit h2,
+.font-outfit h3,
+.font-outfit h4,
+.font-outfit h5,
+.font-outfit h6 {
+  font-family: var(--font-outfit);
+}
