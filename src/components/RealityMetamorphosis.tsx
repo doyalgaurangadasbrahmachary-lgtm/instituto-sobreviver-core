@@ -212,13 +212,13 @@ const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }
                 <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply" />
             </div>
 
-            {/* Capa Color — auto-revelado via whileInView */}
+            {/* Capa Color — Fase 3: Transformación (t=2500ms) */}
             <motion.div
                 className="absolute inset-0 z-10"
                 initial={{ clipPath: 'circle(0% at 50% 50%)' }}
                 whileInView={{ clipPath: 'circle(150% at 50% 50%)' }}
-                viewport={{ once: true, margin: '-10% 0px' }}
-                transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 2.0, delay: 2.5, ease: [0.16, 1, 0.3, 1] }}
             >
                 <img
                     src={section.imgColor.mobile}
@@ -237,13 +237,13 @@ const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }
                 <div className="absolute bottom-0 w-full h-[55vh] bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
             </div>
 
-            {/* Texto — slide-up con delay 0.3s */}
+            {/* Texto — Fase 2: Aparece mientras el B&N aún domina (t=500ms) */}
             <motion.div
-                className="absolute bottom-[10%] left-[6%] w-[88%] z-30 pointer-events-auto"
+                className="absolute bottom-[10%] left-[6%] w-[88%] z-30 pointer-events-auto pt-16"
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-10% 0px' }}
-                transition={{ duration: 0.8, delay: 0.7, ease: 'easeOut' }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.8, delay: 0.5, ease: 'easeOut' }}
             >
                 <h3 className="font-display text-6xl font-bold mb-4 text-brand-cyan tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.6)]">
                     {section.title}
@@ -305,8 +305,8 @@ const RealityMetamorphosis: React.FC = () => {
     if (isMobile) {
         return (
             <section id="reality-metamorphosis" className="relative w-full">
-                {/* Botón CTA flotante — contenedor transparente para no generar bloque azul */}
-                <div className="sticky top-0 z-[100] flex justify-center py-3 bg-transparent">
+                {/* Botón CTA — Spaceless Sticky: h-0 overflow-visible no impacta el flujo del documento */}
+                <div className="sticky top-4 z-[100] h-0 overflow-visible flex justify-center">
                     <div className="drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
                         <DonationButton variant="cyan" />
                     </div>
