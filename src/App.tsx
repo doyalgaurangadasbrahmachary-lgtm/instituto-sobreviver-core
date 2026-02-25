@@ -4,13 +4,11 @@ import { useEffect } from 'react';
 import RealityMetamorphosis from './components/RealityMetamorphosis';
 import Programs from './components/Programs';
 import HumanImpactGallery from './components/HumanImpactGallery';
-import { DonationProvider } from './context/DonationContext';
 import './styles/theme.css';
 
 import { ViewProvider, useView } from './context/ViewContext';
 import ImperativoDignidade from './components/imperativo/ImperativoDignidade';
 import Hero from './components/Hero';
-import DonationModal from './components/DonationModal';
 import DonationPillHeader from './components/ui/DonationPillHeader';
 
 // Home Components (converted from Next.js)
@@ -63,20 +61,15 @@ const AppContent = () => {
                     <ImperativoDignidade onBack={closeReport} />
                 </div>
             )}
-
-            {/* Global Donation Modal Overlay */}
-            <DonationModal />
         </main>
     );
 };
 
 function App() {
     return (
-        <DonationProvider>
-            <ViewProvider>
-                <AppContent />
-            </ViewProvider>
-        </DonationProvider>
+        <ViewProvider>
+            <AppContent />
+        </ViewProvider>
     )
 }
 

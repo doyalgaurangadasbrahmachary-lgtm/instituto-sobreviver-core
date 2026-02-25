@@ -4,7 +4,6 @@ import { Hero } from './Hero';
 import { Section } from './Section';
 import { MortalityChart, JudicialChart } from './Charts';
 import { CONTENT } from '../../data/imperativo-content';
-import { useDonation } from '../../context/DonationContext';
 import { Instagram, Heart, MessageCircle, ArrowLeft, FileDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ImpactFlowSvg from './ImpactFlowSvg';
@@ -37,7 +36,7 @@ interface ImperativoDignidadeProps {
 
 const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => {
   const [activeSection, setActiveSection] = useState('intro');
-  const { openDonationModal } = useDonation();
+  const MP_LINK = 'https://link.mercadopago.com.br/sobreviver';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -508,13 +507,10 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
 
                 {/* Botón de Donación Principal */}
                 <button
-                  onClick={() => {
-                    onBack();
-                    openDonationModal();
-                  }}
+                  onClick={() => window.open(MP_LINK, '_blank', 'noopener,noreferrer')}
                   className="group flex items-center gap-4 bg-[#34BBCE] border border-[#34BBCE] px-10 py-5 rounded-full hover:bg-white hover:text-[#24526E] transition-all duration-300 transform w-full md:w-auto justify-center shadow-[0_0_40px_rgba(52,187,206,0.3)]"
                 >
-                  <span className="uppercase tracking-[0.2em] text-sm font-bold font-sans">Faça sua Doação</span>
+                  <span className="uppercase tracking-[0.2em] text-sm font-bold font-sans">Faça sua doação</span>
                   <Heart className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
                 </button>
 
