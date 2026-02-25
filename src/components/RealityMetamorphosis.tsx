@@ -190,12 +190,10 @@ const DesktopSlideWrapper = ({
 };
 
 // =============================================================================
-// MOBILE: 6-Step Bulletproof Vertical Flow (V11.1)
-// Arquitectura: 6 bloques min-h-screen independientes.
-// - Imágenes: opacity:1 fija, sin animaciones de entrada.
-// - Texto: scroll-driven bidireccional via useScroll offset:["start end","end start"]
-//   Aparece al 10-20%, desaparece al 80-95%.
-// - Bloque 6 (Jurídica Color): persistencia via useState lock.
+// MOBILE: 6-Step Vertical Flow V11.2 — Zoom Progresivo en Imagen
+// Zoom: scale 1.0 → 1.15 vinculado al scrollYProgress (reversible)
+// overflow:hidden aplicado SOLO en la capa de imagen, no en el bloque completo.
+// El bloque de texto queda fuera del contenedor de zoom — sin distorsión.
 // =============================================================================
 
 interface MobileScrollBlockProps {
@@ -227,12 +225,15 @@ const MobileScrollBlock = ({
     const { openReport } = useView();
     const [locked, setLocked] = useState(false);
 
-    // Mide el recorrido completo del bloque por el viewport
-    // progress 0 = bloque entra por abajo | progress 1 = bloque sale por arriba
+    // Mide el recorrido completo del bloque por el viewport (bidireccional)
     const { scrollYProgress } = useScroll({
         target: blockRef,
         offset: ['start end', 'end start'],
     });
+
+    // Zoom de imagen: escala suavemente al 115% a medida que el bloque avanza
+    // Se revierte al hacer scroll up (bidireccional nativo de useTransform)
+    const imgScale = useTransform(scrollYProgress, [0, 1], [1.0, 1.15]);
 
     // Texto: aparece al 10-20%, permanece, desaparece al 80-95%
     const rawTextOpacity = useTransform(
@@ -242,12 +243,11 @@ const MobileScrollBlock = ({
     );
     const textY = useTransform(scrollYProgress, [0.10, 0.20], [30, 0]);
 
-    // Bloque 6: cuando llega al 20% visible, se congela en opacity:1 para siempre
+    // Bloque 6: bloqueo de persistencia para el último bloque (Jurídica Color)
     useMotionValueEvent(scrollYProgress, 'change', (v) => {
         if (isPersistent && v >= 0.20 && !locked) setLocked(true);
     });
 
-    // Si está bloqueado, usa 1 directo; si no, usa la MotionValue bidireccional
     const textOpacity = locked ? 1 : rawTextOpacity;
 
     return (
@@ -256,32 +256,38 @@ const MobileScrollBlock = ({
             className="relative w-full min-h-screen"
             style={{ touchAction: 'pan-y' }}
         >
-            {/* IMAGEN FIJA — suelo permanente de la sección */}
-            <img
-                src={imgSrc}
-                alt={imgAlt}
-                className={`absolute inset-0 w-full h-full object-cover ${isGrayscale
-                    ? 'filter grayscale brightness-[1.15] contrast-[1.05]'
-                    : 'brightness-110 saturate-110'
-                    }`}
-                loading="lazy"
-                decoding="async"
-                width={390}
-                height={844}
-            />
+            {/* CAPA DE IMAGEN — overflow:hidden aislado contiene el zoom sin afectar el texto */}
+            <div className="absolute inset-0 overflow-hidden">
+                <motion.img
+                    src={imgSrc}
+                    alt={imgAlt}
+                    className={`absolute inset-0 w-full h-full object-cover will-change-transform ${isGrayscale
+                            ? 'filter grayscale brightness-[1.15] contrast-[1.05]'
+                            : 'brightness-110 saturate-110'
+                        }`}
+                    style={{ scale: imgScale }}
+                    loading="lazy"
+                    decoding="async"
+                    width={390}
+                    height={844}
+                />
+            </div>
+
+            {/* Overlay de color/tono según tipo de bloque */}
             {isGrayscale && (
-                <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply" />
+                <div className="absolute inset-0 z-[1] bg-brand-navy/40 mix-blend-multiply pointer-events-none" />
             )}
             {!isGrayscale && (
-                <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay" />
+                <div className="absolute inset-0 z-[1] bg-brand-cyan/10 mix-blend-overlay pointer-events-none" />
             )}
 
-            {/* Gradiente de legibilidad */}
+            {/* Gradiente de legibilidad — sin zoom, completamente estático */}
             <div className="absolute inset-0 z-10 pointer-events-none">
                 <div className="absolute bottom-0 w-full h-[55vh] bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
             </div>
 
-            {/* TEXTO — bidireccional: aparece y desaparece con el scroll */}
+            {/* TEXTO — completamente desvinculado de la capa de zoom */}
+            {/* No hereda ningún transform de scale, permanece perfectamente estático */}
             <motion.div
                 className="absolute bottom-[10%] left-[6%] w-[88%] z-20 pointer-events-auto"
                 style={{ opacity: textOpacity, y: locked ? 0 : textY }}
