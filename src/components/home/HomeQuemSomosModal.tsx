@@ -48,7 +48,7 @@ export default function HomeQuemSomosModal({ isOpen, onClose }: HomeQuemSomosMod
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.95, opacity: 0, y: 30 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="relative group bg-transparent w-full max-w-[420px] h-[85vh] max-h-[850px] shadow-2xl rounded-[32px] overflow-hidden flex flex-col"
+                            className="relative group bg-[#f5f0e8] w-full max-w-[420px] h-[85vh] max-h-[850px] shadow-2xl rounded-[32px] overflow-hidden flex flex-col"
                         >
                             {/* Close Button */}
                             <button
@@ -68,7 +68,8 @@ export default function HomeQuemSomosModal({ isOpen, onClose }: HomeQuemSomosMod
                                     alt="Muro del Instituto"
                                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
                                     style={{ objectPosition: '75% 50%' }}
-                                    loading="lazy"
+                                    loading="eager"
+                                    fetchPriority="high"
                                     decoding="async"
                                     width={420}
                                     height={550}
@@ -137,7 +138,8 @@ export default function HomeQuemSomosModal({ isOpen, onClose }: HomeQuemSomosMod
                                     src="/assets/brand/home/lau.png"
                                     alt="Ilustração Laura e Valquíria"
                                     className="absolute inset-0 w-full h-full object-contain object-bottom"
-                                    loading="lazy"
+                                    loading="eager"
+                                    fetchPriority="high"
                                     decoding="async"
                                     width={250}
                                     height={600}

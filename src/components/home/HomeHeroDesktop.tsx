@@ -137,6 +137,11 @@ export default function HomeHeroDesktop() {
                 </div>
 
             </div>
+            {/* ── Invisible preload: caches modal assets on Hero mount ── */}
+            <div className="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none" aria-hidden="true">
+                <img src="/assets/brand/home/fondo_tarjeta.png" alt="" loading="eager" fetchPriority="high" decoding="async" width={1} height={1} />
+                <img src="/assets/brand/home/lau.png" alt="" loading="eager" fetchPriority="high" decoding="async" width={1} height={1} />
+            </div>
         </section >
     );
 }
