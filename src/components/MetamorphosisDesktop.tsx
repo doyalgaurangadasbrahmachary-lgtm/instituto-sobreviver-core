@@ -193,16 +193,19 @@ const ImageBlock = ({
 const MetamorphosisDesktop: React.FC = () => {
     const containerRef = useRef<HTMLElement>(null);
 
-    // Track when this section enters the viewport to fade the button in.
-    // 'start end': top of section meets bottom of viewport (just starting to appear).
-    // 'start center': top of section reaches vertical center of viewport.
+    // Track when this section enters the viewport to fade the button in and out.
+    // 'start end': top of section touches bottom of viewport.
+    // 'end start': bottom of section touches top of viewport.
     const { scrollYProgress } = useScroll({
         target: containerRef,
-        offset: ['start end', 'start center']
+        offset: ['start end', 'end start']
     });
 
-    // Opacity: 0 when in Hero -> 1 when fully entered Metamorphosis
-    const buttonOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+    // Opacity: 
+    // 0.0 -> 0.05: fade in as section enters
+    // 0.05 -> 0.9: solid during section
+    // 0.9 -> 0.95: fade out as section leaves
+    const buttonOpacity = useTransform(scrollYProgress, [0, 0.05, 0.9, 0.95], [0, 1, 1, 0]);
 
     return (
         <section ref={containerRef} className="relative w-full bg-black">
