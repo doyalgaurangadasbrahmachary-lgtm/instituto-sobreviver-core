@@ -12,7 +12,7 @@ const SECTIONS = [
     {
         id: 'fisica',
         title: 'Física',
-        imgBN: { desktop: '/assets/brand/donation/seccion-2/Sec_1_BN.png', mobile: '/assets/brand/donation/metamorfosis-movil/1.1.png' },
+        imgBN: { desktop: '/assets/brand/donation/seccion-2/Sec_1_BN.png', mobile: '/assets/brand/donation/metamorfosis-movil/hospital.png' },
         imgColor: { desktop: '/assets/brand/donation/seccion-2/Sec_1_Color.png', mobile: '/assets/brand/donation/metamorfosis-movil/1.2.png' },
         criticalText: "Em Divinópolis, as mortes por câncer cresceram 54% na última década. O sistema ignora a dor de quem não pode esperar.",
         hopeText: "O Instituto oferece alívio integral. Com Ozonioterapia e terapias especializadas, garantimos que a dignidade vença a dor física."
