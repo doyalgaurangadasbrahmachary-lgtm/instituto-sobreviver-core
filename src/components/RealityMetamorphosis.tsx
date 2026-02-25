@@ -21,7 +21,7 @@ const SECTIONS = [
         id: 'social',
         title: 'Social',
         imgBN: { desktop: '/assets/brand/donation/seccion-2/Sec_2_BN.png', mobile: '/assets/brand/donation/metamorfosis-movil/2.1.png' },
-        imgColor: { desktop: '/assets/brand/donation/seccion-2/cambiarescena.png', mobile: '/assets/brand/donation/metamorfosis-movil/2.2.png' },
+        imgColor: { desktop: '/assets/brand/donation/seccion-2/cambiarescena.png', mobile: '/assets/brand/donation/metamorfosis-movil/familia.png' },
         criticalText: "Minas Gerais possui apenas 71 leitos paliativos para 21 milhões de pessoas. O abandono institucional é a regra nos desertos assistenciais.",
         hopeText: "Somos uma Comunidade Paliativista. Mais de 370 pessoas já foram resgatadas do isolamento para um ambiente de amor e presença ativa."
     },
