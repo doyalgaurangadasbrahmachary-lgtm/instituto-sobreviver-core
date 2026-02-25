@@ -206,17 +206,14 @@ const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }
         offset: ['start start', 'end end'],
     });
 
-    // ── Fase 1: Entrada de B&N (0% → 10%) ─────────────────────────────────
-    const bnOpacity = useTransform(scrollYProgress, [0, 0.10], [0, 1]);
-
-    // ── Fase 1-2: Texto del problema — entra, se reposa, sale ───────────────
-    // Entra 0→12%, reposo 12→43%, sale 43→50%
+    // ── Fase 2: Texto del problema — umbral de aparición en el 30% ──────────
+    // Invisible 0→28%, entra 28→32%, reposo 32→43%, sale 43→50%
     const textOpacity = useTransform(
         scrollYProgress,
-        [0, 0.12, 0.43, 0.50],
+        [0.28, 0.32, 0.43, 0.50],
         [0, 1, 1, 0]
     );
-    const textY = useTransform(scrollYProgress, [0, 0.12], [30, 0]);
+    const textY = useTransform(scrollYProgress, [0.28, 0.32], [30, 0]);
 
     // ── Fase 3: Revelado de color via clipPath (50% → 85%) ─────────────────
     const clipPath = useTransform(
@@ -239,8 +236,9 @@ const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }
                 className="sticky top-0 w-full h-screen"
                 style={{ overflow: 'clip', touchAction: 'pan-y' }}
             >
-                {/* Fase 1 — Imagen B&N con fade-in suave */}
-                <motion.div className="absolute inset-0 z-0" style={{ opacity: bnOpacity }}>
+                {/* SUELO ESTÁTICO — Imagen B&N fija, sin animación, opacity 1 siempre */}
+                {/* Elimina el flash blanco: nunca habrá un fotograma sin fondo */}
+                <div className="absolute inset-0 z-0">
                     <img
                         src={section.imgBN.mobile}
                         alt={`${section.title} B&N`}
@@ -251,7 +249,7 @@ const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }
                         height={844}
                     />
                     <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply" />
-                </motion.div>
+                </div>
 
                 {/* Fase 3 — Imagen Color (clipPath nace en 50% del scroll) */}
                 <motion.div className="absolute inset-0 z-10" style={{ clipPath }}>
@@ -353,7 +351,7 @@ const RealityMetamorphosis: React.FC = () => {
     // ─── RENDER MÓVIL (< 768px) ────────────────────────────────────────────
     if (isMobile) {
         return (
-            <section id="reality-metamorphosis" className="relative w-full">
+            <section id="reality-metamorphosis" className="relative w-full bg-black">
                 {/* Botón CTA — Spaceless Sticky: h-0 overflow-visible no impacta el flujo del documento */}
                 <div className="sticky top-4 z-[100] h-0 overflow-visible flex justify-center">
                     <div className="drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
