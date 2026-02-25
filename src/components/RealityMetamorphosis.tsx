@@ -231,9 +231,10 @@ const MobileScrollBlock = ({
         offset: ['start end', 'end start'],
     });
 
-    // Zoom de imagen: escala suavemente al 115% a medida que el bloque avanza
-    // Se revierte al hacer scroll up (bidireccional nativo de useTransform)
-    const imgScale = useTransform(scrollYProgress, [0, 1], [1.0, 1.15]);
+    // Zoom de imagen: scale 1.0 → 1.35 + parallax y (espeja los valores del Hero)
+    // Hero: scale:1.35, yPercent:5, ease:'none' con GSAP scrub:true → equivalente directo
+    const imgScale = useTransform(scrollYProgress, [0, 1], [1.0, 1.35]);
+    const imgY = useTransform(scrollYProgress, [0, 1], [0, 50]); // ≈ yPercent:5 a 844px
 
     // Texto: aparece al 10-20%, permanece, desaparece al 80-95%
     const rawTextOpacity = useTransform(
@@ -262,10 +263,10 @@ const MobileScrollBlock = ({
                     src={imgSrc}
                     alt={imgAlt}
                     className={`absolute inset-0 w-full h-full object-cover will-change-transform ${isGrayscale
-                            ? 'filter grayscale brightness-[1.15] contrast-[1.05]'
-                            : 'brightness-110 saturate-110'
+                        ? 'filter grayscale brightness-[1.15] contrast-[1.05]'
+                        : 'brightness-110 saturate-110'
                         }`}
-                    style={{ scale: imgScale }}
+                    style={{ scale: imgScale, y: imgY }}
                     loading="lazy"
                     decoding="async"
                     width={390}
