@@ -12,6 +12,7 @@ import ImperativoDignidade from './components/imperativo/ImperativoDignidade';
 import Hero from './components/Hero';
 import DonationModal from './components/DonationModal';
 import DonationPillHeader from './components/ui/DonationPillHeader';
+import DonationButton from './components/ui/DonationButton';
 
 // Home Components (converted from Next.js)
 import HomeHeader from './components/home/HomeHeader';
@@ -49,6 +50,10 @@ const AppContent = () => {
             {/* === VISTA DONATION: 100% viewport, portal completo === */}
             <Activity mode={view === 'donation' ? 'visible' : 'hidden'}>
                 <DonationPillHeader onBack={() => setView('home')} />
+                {/* Donation CTA — fixed top-right on desktop, below pill on mobile */}
+                <div className="fixed z-[149] top-[72px] left-1/2 -translate-x-1/2 md:top-6 md:left-auto md:right-6 md:translate-x-0 pointer-events-auto">
+                    <DonationButton variant="cyan" />
+                </div>
                 <Hero />
                 <RealityMetamorphosis />
                 <Programs />
