@@ -4,7 +4,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 
 gsap.registerPlugin(useGSAP);
 
@@ -203,10 +202,7 @@ const Programs: React.FC = () => {
                 <p className="font-display text-2xl md:text-3xl text-brand-navy leading-snug">
                     "Sua <span className="text-brand-cyan">contribuição</span> é a força que preenche o vazio do descaso e dignifica cada <span className="text-brand-cyan">vida</span>."
                 </p>
-                <div className="mt-6 flex items-center gap-2 text-brand-navy/50 text-sm">
-                    <span>Toque para explorar</span>
-                    <ArrowRight className="w-4 h-4 animate-pulse" />
-                </div>
+
             </motion.div>
 
             {/* Cards verticales — slide-up escalonado */}
