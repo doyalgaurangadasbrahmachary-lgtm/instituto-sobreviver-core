@@ -92,7 +92,7 @@ const ImageBlock = ({
     // Continuous zoom: 1.0 → 1.12 across the FULL block (no flat zone — mirrors Hero scrub)
     const scale = useTransform(scrollYProgress, [0, 1], [1.0, 1.12]);
     // Subtle vertical drift (identical to Hero yPercent: 5)
-    const yPercent = useTransform(scrollYProgress, [0, 1], [0, 5]);
+    const yPercent = useTransform(scrollYProgress, [0, 1], ['0%', '5%']);
     // Text & overlay fade out gently as the block exits
     const textOpacity = useTransform(scrollYProgress, [0.75, 1], [1, 0]);
 
@@ -107,7 +107,7 @@ const ImageBlock = ({
                     className="absolute inset-0 w-full h-full object-cover object-center origin-center"
                     style={{
                         scale,
-                        y: useTransform(scrollYProgress, [0, 1], ['0%', '5%']),
+                        y: yPercent,
                     }}
                     loading={isFirst ? 'eager' : 'lazy'}
                     decoding="async"
