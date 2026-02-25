@@ -9,6 +9,28 @@ import { Instagram, Heart, MessageCircle, ArrowLeft, FileDown } from 'lucide-rea
 import { motion } from 'framer-motion';
 import ImpactFlowSvg from './ImpactFlowSvg';
 
+// --- HELPER: split «Título: Subtítulo» para jerarquía tipográfica ---
+const TitleSplit = ({
+  text,
+  titleClass = 'font-bold text-[#24526E]',
+  subtitleClass = 'font-light text-[#24526E]/70',
+}: {
+  text: string;
+  titleClass?: string;
+  subtitleClass?: string;
+}) => {
+  const colonIdx = text.indexOf(':');
+  if (colonIdx === -1) return <>{text}</>;
+  const partA = text.slice(0, colonIdx + 1);
+  const partB = text.slice(colonIdx + 1).trimStart();
+  return (
+    <>
+      <span className={titleClass}>{partA}</span>
+      <span className={`block ${subtitleClass} mt-2`}>{partB}</span>
+    </>
+  );
+};
+
 interface ImperativoDignidadeProps {
   onBack: () => void;
 }
@@ -70,7 +92,7 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
                 <p className="text-3xl lg:text-5xl serif italic text-[#24526E] leading-tight mb-16 border-l-8 border-[#34BBCE] pl-8">
                   {CONTENT.intro_full[0]}
                 </p>
-                <div className="text-xl leading-relaxed text-gray-700 text-justify">
+                <div className="text-xl leading-relaxed tracking-normal text-gray-700 text-left">
                   <p className="drop-cap">{CONTENT.intro_full[1]}</p>
                 </div>
               </div>
@@ -92,9 +114,11 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
         {/* ESTATÍSTICAS */}
         <Section id="stats" bgColor="bg-[#F9F7F2]" title="Diagnóstico" titleColor="text-[#34BBCE]">
           <div className="max-w-5xl mx-auto py-32 px-8">
-            <h2 className="serif text-5xl text-[#24526E] mb-16 leading-tight max-w-2xl">{CONTENT.stats_section.title}</h2>
+            <h2 className="serif text-5xl text-[#24526E] mb-16 leading-tight max-w-2xl">
+              <TitleSplit text={CONTENT.stats_section.title} />
+            </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 mb-24">
-              <div className="space-y-8 text-lg leading-relaxed text-justify text-gray-700">
+              <div className="space-y-8 text-lg leading-relaxed tracking-normal text-left text-gray-700">
                 <p className="drop-cap">{CONTENT.stats_section.p1}</p>
                 <p>{CONTENT.stats_section.p2}</p>
               </div>
@@ -113,7 +137,7 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
                 </div>
               </div>
             </div>
-            <div className="text-xl leading-relaxed text-justify text-gray-700 max-w-3xl border-t border-gray-200 pt-16">
+            <div className="text-xl leading-relaxed tracking-normal text-left text-gray-700 max-w-3xl border-t border-gray-200 pt-16">
               <p>{CONTENT.stats_section.p3}</p>
             </div>
           </div>
@@ -122,9 +146,11 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
         {/* HOSPITAL */}
         <Section id="hospital" bgColor="bg-[#24526E]" title="Estrutura">
           <div className="max-w-5xl mx-auto py-32 px-8 text-white">
-            <h2 className="serif text-5xl mb-16 italic">{CONTENT.hospital_section.title}</h2>
+            <h2 className="serif text-5xl mb-16 italic">
+              <TitleSplit text={CONTENT.hospital_section.title} titleClass="font-bold text-white" subtitleClass="font-light text-white/70" />
+            </h2>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
-              <div className="lg:col-span-7 space-y-8 text-xl opacity-90 leading-relaxed text-justify">
+              <div className="lg:col-span-7 space-y-8 text-xl opacity-90 leading-relaxed tracking-normal text-left">
                 <p>{CONTENT.hospital_section.p1}</p>
                 <blockquote className="py-16 px-10 bg-white/5 border-l-2 border-[#34BBCE] my-16 shadow-2xl">
                   <p className="serif text-4xl italic leading-tight">"{CONTENT.hospital_section.quote}"</p>
@@ -149,20 +175,26 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
         {/* JUDICIALIZAÇÃO */}
         <Section id="judicial" bgColor="bg-white" title="Legalidade" titleColor="text-[#34BBCE]">
           <div className="max-w-5xl mx-auto py-32 px-8">
-            <h2 className="serif text-5xl text-[#24526E] mb-12">{CONTENT.judicial_section.title}</h2>
-            <p className="text-2xl text-gray-500 mb-20 max-w-3xl leading-relaxed italic">{CONTENT.judicial_section.intro}</p>
+            <h2 className="serif text-5xl text-[#24526E] mb-12">
+              <TitleSplit text={CONTENT.judicial_section.title} />
+            </h2>
+            <p className="text-2xl text-gray-500 mb-20 max-w-3xl leading-relaxed tracking-normal text-left italic">{CONTENT.judicial_section.intro}</p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-24">
               <div className="p-12 bg-[#F9F7F2] rounded-[3rem] border border-gray-100 shadow-sm">
-                <h3 className="serif text-3xl text-[#24526E] mb-8 font-bold">{CONTENT.judicial_section.shield_title}</h3>
-                <div className="space-y-6 text-gray-700 leading-relaxed text-justify">
+                <h3 className="serif text-3xl text-[#24526E] mb-8 font-bold">
+                  <TitleSplit text={CONTENT.judicial_section.shield_title} />
+                </h3>
+                <div className="space-y-6 text-gray-700 leading-relaxed tracking-normal text-left">
                   <p>{CONTENT.judicial_section.shield_p1}</p>
                   <p>{CONTENT.judicial_section.shield_p2}</p>
                 </div>
               </div>
               <div className="p-12 bg-[#24526E] text-white rounded-[3rem] shadow-xl">
-                <h3 className="serif text-3xl text-[#34BBCE] mb-8 font-bold">{CONTENT.judicial_section.fraud_title}</h3>
-                <div className="space-y-6 opacity-90 leading-relaxed text-justify">
+                <h3 className="serif text-3xl text-[#34BBCE] mb-8 font-bold">
+                  <TitleSplit text={CONTENT.judicial_section.fraud_title} titleClass="font-bold text-[#34BBCE]" subtitleClass="font-light text-white/70" />
+                </h3>
+                <div className="space-y-6 opacity-90 leading-relaxed tracking-normal text-left">
                   <p>{CONTENT.judicial_section.fraud_p1}</p>
                   <p>{CONTENT.judicial_section.fraud_p2}</p>
                 </div>
@@ -179,8 +211,10 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
         {/* REALIDADES */}
         <Section id="realities" bgColor="bg-[#F9F7F2]" title="Humanidade" titleColor="text-[#34BBCE]">
           <div className="max-w-5xl mx-auto py-32 px-8">
-            <h2 className="serif text-5xl text-[#24526E] mb-16">{CONTENT.realities_section.title}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 text-lg text-gray-700 leading-relaxed text-justify">
+            <h2 className="serif text-5xl text-[#24526E] mb-16">
+              <TitleSplit text={CONTENT.realities_section.title} />
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 text-lg text-gray-700 leading-relaxed tracking-normal text-left">
               <div className="space-y-8 h-full">
                 <p className="drop-cap">{CONTENT.realities_section.p1}</p>
                 <div className="sticky top-32">
@@ -239,7 +273,7 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
                   {CONTENT.laura_section.battle_title}
                 </h3>
               </div>
-              <div className="lg:col-span-7 space-y-10 text-xl leading-relaxed text-gray-700 text-justify">
+              <div className="lg:col-span-7 space-y-10 text-xl leading-relaxed tracking-normal text-left text-gray-700">
                 <p className="drop-cap">{CONTENT.laura_section.p1}</p>
                 <p>{CONTENT.laura_section.battle_p1}</p>
                 <div className="py-12 border-y border-gray-100 my-12">
@@ -254,7 +288,7 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
             <div className="mt-40 p-20 bg-[#F9F7F2] rounded-[4rem] border border-gray-100 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#34BBCE]/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000"></div>
               <h3 className="serif text-4xl text-[#24526E] mb-10 relative z-10">{CONTENT.laura_section.community_title}</h3>
-              <p className="text-2xl text-gray-700 leading-relaxed text-justify relative z-10 font-light italic">{CONTENT.laura_section.community_p1}</p>
+              <p className="text-2xl text-gray-700 leading-relaxed tracking-normal text-left relative z-10 font-light italic">{CONTENT.laura_section.community_p1}</p>
             </div>
           </div>
         </Section>
@@ -262,8 +296,10 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
         {/* IMPACTO E SERVIÇOS */}
         <Section id="impact" bgColor="bg-[#24526E]" title="Impacto">
           <div className="max-w-6xl mx-auto py-32 px-8 text-white">
-            <h2 className="serif text-6xl mb-20">{CONTENT.impact_section.title}</h2>
-            <p className="text-2xl mb-24 opacity-80 max-w-4xl font-light italic leading-relaxed">{CONTENT.impact_section.intro}</p>
+            <h2 className="serif text-6xl mb-20">
+              <TitleSplit text={CONTENT.impact_section.title} titleClass="font-bold text-white" subtitleClass="font-light text-white/70" />
+            </h2>
+            <p className="text-2xl mb-24 opacity-80 max-w-4xl font-light italic leading-relaxed tracking-normal text-left">{CONTENT.impact_section.intro}</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-32">
               {CONTENT.impact_section.metrics.map((m, i) => (
@@ -276,8 +312,8 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
               <div className="space-y-16">
-                <p className="text-xl opacity-90 leading-relaxed text-justify">{CONTENT.impact_section.therapies_p1}</p>
-                <div className="space-y-10">
+                <p className="text-xl opacity-90 leading-relaxed tracking-normal text-left">{CONTENT.impact_section.therapies_p1}</p>
+                <div className="space-y-4">
                   {CONTENT.impact_section.services.map((s, i) => (
                     <div key={i} className="flex gap-8 group">
                       <div className="w-16 h-16 rounded-full border border-[#34BBCE]/30 flex-shrink-0 flex items-center justify-center text-[#34BBCE] text-xl font-serif group-hover:bg-[#34BBCE] group-hover:text-white transition-all duration-500">
@@ -285,7 +321,7 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
                       </div>
                       <div>
                         <h4 className="font-bold text-xl text-[#34BBCE] mb-2">{s.name}</h4>
-                        <p className="text-sm opacity-60 leading-relaxed">{s.desc}</p>
+                        <p className="text-sm opacity-60 leading-relaxed tracking-normal text-left">{s.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -327,7 +363,7 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
                   </div>
 
                   {/* Texto Descriptivo */}
-                  <div className="text-xl text-gray-700 leading-relaxed text-justify font-light">
+                  <div className="text-xl text-gray-700 leading-relaxed tracking-normal text-left font-light">
                     <p>{CONTENT.mayara_section.p2}</p>
                   </div>
                 </div>
@@ -353,8 +389,10 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
         {/* POLÍTICA PÚBLICA */}
         <Section id="policy" bgColor="bg-white" title="Futuro" titleColor="text-[#34BBCE]">
           <div className="max-w-5xl mx-auto py-32 px-8">
-            <h2 className="serif text-5xl md:text-6xl text-[#24526E] mb-12 italic leading-tight">{CONTENT.policy_section.title}</h2>
-            <p className="text-2xl text-gray-400 mb-24 max-w-3xl leading-relaxed font-light">{CONTENT.policy_section.intro}</p>
+            <h2 className="serif text-5xl md:text-6xl text-[#24526E] mb-12 italic leading-tight">
+              <TitleSplit text={CONTENT.policy_section.title} />
+            </h2>
+            <p className="text-2xl text-gray-400 mb-24 max-w-3xl leading-relaxed tracking-normal text-left font-light">{CONTENT.policy_section.intro}</p>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start mb-32">
 
@@ -417,10 +455,12 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
         {/* CONCLUSÃO */}
         <Section id="conclusion" bgColor="bg-[#24526E]" title="Epílogo">
           <div className="max-w-5xl mx-auto py-40 px-8 text-white">
-            <h2 className="serif text-6xl mb-24 italic leading-none">{CONTENT.conclusion_section.title}</h2>
+            <h2 className="serif text-6xl mb-24 italic leading-none">
+              <TitleSplit text={CONTENT.conclusion_section.title} titleClass="font-bold text-white" subtitleClass="font-light text-white/70" />
+            </h2>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-24">
               <div className="lg:col-span-8 space-y-16">
-                <p className="text-3xl opacity-95 leading-snug text-justify serif italic font-light">{CONTENT.conclusion_section.p1}</p>
+                <p className="text-3xl opacity-95 leading-snug tracking-normal text-left serif italic font-light">{CONTENT.conclusion_section.p1}</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   {CONTENT.conclusion_section.recommendations.map((r, i) => (
                     <div key={i} className="p-8 bg-white/5 border-l-2 border-[#34BBCE] hover:bg-white/10 transition-all duration-500">
@@ -429,14 +469,14 @@ const ImperativoDignidade: React.FC<ImperativoDignidadeProps> = ({ onBack }) => 
                     </div>
                   ))}
                 </div>
-                <p className="text-2xl opacity-80 leading-relaxed text-justify pt-16 border-t border-white/10 font-light italic">
+                <p className="text-2xl opacity-80 leading-relaxed tracking-normal text-left pt-16 border-t border-white/10 font-light italic">
                   {CONTENT.conclusion_section.final_p}
                 </p>
               </div>
               <div className="lg:col-span-4 space-y-16 sticky top-32 h-fit">
                 <div className="p-10 bg-white/5 border border-white/10 rounded-[2rem] shadow-xl">
                   <h4 className="serif text-2xl mb-8 text-[#34BBCE] italic">Fontes Técnicas</h4>
-                  <ul className="space-y-5 text-[10px] uppercase tracking-[0.25em] opacity-50 font-medium leading-relaxed">
+                  <ul className="space-y-4 text-[10px] uppercase tracking-[0.25em] opacity-50 font-medium leading-relaxed">
                     {CONTENT.sources.map((s, i) => (
                       <li key={i} className="border-b border-white/10 pb-4 last:border-0">{s}</li>
                     ))}
