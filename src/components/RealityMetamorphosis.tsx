@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, MotionValue, Easing } from 'framer-motion';
 
 import { useView } from '../context/ViewContext';
 import { FileText, ExternalLink } from 'lucide-react';
@@ -190,15 +190,50 @@ const DesktopSlideWrapper = ({
 };
 
 // =============================================================================
-// MOBILE: Scroll natural sin sticky — Coreografía Exclusiva Móvil (V8.2)
+// MOBILE: Scroll natural — Variants propagados desde el padre (V8.12)
+// FIX: El whileInView vive en el div padre (min-h-screen, visible al sensor).
+// Los hijos motion.div reciben el trigger en cascada respetando sus delays.
 // =============================================================================
+
+// Variants del contenedor padre — activa "animate" en todos los hijos
+const mobileSceneVariants = {
+    initial: {},
+    animate: {},
+};
+
+// Variants de la capa de COLOR (Fase 3: t=2500ms)
+const colorLayerVariants = {
+    initial: { clipPath: 'circle(0% at 50% 50%)' },
+    animate: {
+        clipPath: 'circle(150% at 50% 50%)',
+        transition: { duration: 2.0, delay: 2.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+    },
+};
+
+// Variants de la TARJETA DE TEXTO (Fase 2: t=500ms)
+const textCardVariants = {
+    initial: { opacity: 0, y: 40 },
+    animate: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.8, delay: 0.5, ease: 'easeOut' as Easing },
+    },
+};
 
 const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }) => {
     const { openReport } = useView();
 
     return (
-        <div className="relative w-full min-h-screen overflow-hidden" style={{ touchAction: 'pan-y' }}>
-            {/* Fondo B&N */}
+        // PADRE: el IntersectionObserver lo detecta correctamente (tiene altura real)
+        <motion.div
+            className="relative w-full min-h-screen overflow-hidden"
+            style={{ touchAction: 'pan-y' }}
+            variants={mobileSceneVariants}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, amount: 0.3 }}
+        >
+            {/* Fase 1 — Fondo B&N: visible desde t=0 */}
             <div className="absolute inset-0 z-0">
                 <img
                     src={section.imgBN.mobile}
@@ -212,13 +247,10 @@ const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }
                 <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply" />
             </div>
 
-            {/* Capa Color — Fase 3: Transformación (t=2500ms) */}
+            {/* Fase 3 — Capa Color: clipPath nace en t=2500ms */}
             <motion.div
                 className="absolute inset-0 z-10"
-                initial={{ clipPath: 'circle(0% at 50% 50%)' }}
-                whileInView={{ clipPath: 'circle(150% at 50% 50%)' }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 2.0, delay: 2.5, ease: [0.16, 1, 0.3, 1] }}
+                variants={colorLayerVariants}
             >
                 <img
                     src={section.imgColor.mobile}
@@ -237,13 +269,10 @@ const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }
                 <div className="absolute bottom-0 w-full h-[55vh] bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
             </div>
 
-            {/* Texto — Fase 2: Aparece mientras el B&N aún domina (t=500ms) */}
+            {/* Fase 2 — Tarjeta de texto: slide-up en t=500ms */}
             <motion.div
-                className="absolute bottom-[10%] left-[6%] w-[88%] z-30 pointer-events-auto pt-16"
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.8, delay: 0.5, ease: 'easeOut' }}
+                className="absolute bottom-[10%] left-[6%] w-[88%] z-30 pointer-events-auto"
+                variants={textCardVariants}
             >
                 <h3 className="font-display text-6xl font-bold mb-4 text-brand-cyan tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.6)]">
                     {section.title}
@@ -271,7 +300,7 @@ const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }
                     </p>
                 </div>
             </motion.div>
-        </div>
+        </motion.div>
     );
 };
 
