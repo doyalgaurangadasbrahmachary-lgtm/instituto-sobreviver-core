@@ -1,12 +1,12 @@
 'use client';
 
 // =============================================================================
-// MetamorphosisDesktop.tsx — V25.0 (Hero-Style Natural Zoom)
-// Pattern: identical to Hero.tsx GSAP scrub — continuous scale 1→1.12
-//          across the entire block height, no locking, no snap.
-// 6 blocks × 600vh = 3600vh total.
-// DonationButton: fixed top-4 right-6, z-[145] — aligns with DonationPillHeader pill.
-// INDEPENDENT — changes here NEVER affect MetamorphosisMobile.tsx
+// MetamorphosisDesktop.tsx — Visual Essence Recovery
+// Radical simplification: 
+// 1. Identity: Restored massive 9xl typography and original card styles. Cards are fully static.
+// 2. Button Opacity: Cyan button fades in only when entering the BN section (absolute zero in Hero).
+// 3. Pruning: Zero zoom, zero continuous scale. Sharp 100% static images.
+// 4. Height: 150vh per block for agile, lightweight scrolling (900vh total).
 // =============================================================================
 
 import React, { useRef } from 'react';
@@ -20,59 +20,76 @@ const BLOCKS = [
     {
         src: '/assets/brand/donation/seccion-2/Sec_1_BN.png',
         alt: 'Física — realidade',
-        label: 'Física',
-        accent: 'border-red-500/60',
-        textColor: 'text-white/70',
+        title: 'Física',
+        titleColor: 'text-white/40',
+        accent: 'border-red-500/50',
         text: "Em Divinópolis, as mortes por câncer cresceram 54% na última década. O sistema ignora a dor de quem não pode esperar.",
+        isHope: false,
     },
     {
         src: '/assets/brand/donation/seccion-2/Sec_1_Color.png',
         alt: 'Física — esperança',
-        label: 'Física',
-        accent: 'border-brand-cyan/60',
-        textColor: 'text-brand-cyan',
+        title: 'Física',
+        titleColor: 'text-brand-cyan',
+        accent: 'border-brand-cyan/50',
         text: "O Instituto oferece alívio integral. Com Ozonioterapia e terapias especializadas, garantimos que a dignidade vença a dor física.",
+        isHope: true,
     },
     {
         src: '/assets/brand/donation/seccion-2/Sec_2_BN.png',
         alt: 'Social — realidade',
-        label: 'Social',
-        accent: 'border-red-500/60',
-        textColor: 'text-white/70',
+        title: 'Social',
+        titleColor: 'text-white/40',
+        accent: 'border-red-500/50',
         text: "Minas Gerais possui apenas 71 leitos paliativos para 21 milhões de pessoas. O abandono institucional é a regra nos desertos assistenciais.",
+        isHope: false,
     },
     {
         src: '/assets/brand/donation/seccion-2/cambiarescena.png',
         alt: 'Social — esperança',
-        label: 'Social',
-        accent: 'border-brand-cyan/60',
-        textColor: 'text-brand-cyan',
+        title: 'Social',
+        titleColor: 'text-brand-cyan',
+        accent: 'border-brand-cyan/50',
         text: "Somos uma Comunidade Paliativista. Mais de 370 pessoas já foram resgatadas do isolamento para um ambiente de amor e presença ativa.",
+        isHope: true,
     },
     {
         src: '/assets/brand/donation/seccion-2/Sec_3_BN.png',
         alt: 'Jurídica — realidade',
-        label: 'Jurídica',
-        accent: 'border-red-500/60',
-        textColor: 'text-white/70',
+        title: 'Jurídica',
+        titleColor: 'text-white/40',
+        accent: 'border-red-500/50',
         text: "A burocracia e o descaso bloqueiam o acesso a remédios vitais. Pacientes terminais são tratados como números em processos lentos.",
+        isHope: false,
     },
     {
         src: '/assets/brand/donation/seccion-2/Sec_3_Color.png',
         alt: 'Jurídica — esperança',
-        label: 'Jurídica',
-        accent: 'border-brand-cyan/60',
-        textColor: 'text-brand-cyan',
+        title: 'Jurídica',
+        titleColor: 'text-brand-cyan',
+        accent: 'border-brand-cyan/50',
         text: "Justiça que cura. Já asseguramos R$ 384.000 em bloqueios judiciais para garantir medicamentos de alto custo e dignidade.",
+        isHope: true,
         showReport: true,
     },
 ];
 
+// Helper for title splitting (preserves V24 logic)
+const TitleSplit = ({ text, baseColor }: { text: string; baseColor: string }) => {
+    const colonIdx = text.indexOf(':');
+    if (colonIdx === -1) return <span className={`font-bold ${baseColor}`}>{text}</span>;
+    const partA = text.slice(0, colonIdx + 1);
+    const partB = text.slice(colonIdx + 1).trimStart();
+    return (
+        <>
+            <span className={`font-bold ${baseColor}`}>{partA}</span>
+            <span className={`block font-extralight ${baseColor}/80 mt-1`}>{partB}</span>
+        </>
+    );
+};
+
 // ─── ImageBlock ───────────────────────────────────────────────────────────────
-// Mirrors Hero.tsx's GSAP scrub pattern:
-//   scale: 1.0 → 1.12, continuous across the full block height (scrub=true equivalent).
-//   yPercent: 0 → 5  (very subtle vertical drift, same as Hero).
-// The image wrapper has overflow-hidden so the zoom never bleeds out.
+// Static, agile scroll block (150vh). No zoom. Stable text.
 const ImageBlock = ({
     block,
     isFirst,
@@ -80,84 +97,77 @@ const ImageBlock = ({
     block: typeof BLOCKS[0];
     isFirst?: boolean;
 }) => {
-    const blockRef = useRef<HTMLDivElement>(null);
     const { openReport } = useView();
 
-    // Tracks exact scroll position relative to this block
-    const { scrollYProgress } = useScroll({
-        target: blockRef,
-        offset: ['start start', 'end end'], // 0 = block top at viewport top; 1 = block bottom at viewport bottom
-    });
-
-    // Continuous zoom: 1.0 → 1.12 across the FULL block (no flat zone — mirrors Hero scrub)
-    const scale = useTransform(scrollYProgress, [0, 1], [1.0, 1.12]);
-    // Subtle vertical drift (identical to Hero yPercent: 5)
-    const yPercent = useTransform(scrollYProgress, [0, 1], ['0%', '5%']);
-    // Text & overlay fade out gently as the block exits
-    const textOpacity = useTransform(scrollYProgress, [0.75, 1], [1, 0]);
-
     return (
-        <div ref={blockRef} className="relative h-[600vh]">
+        <div className="relative h-[150vh]">
             <div className="sticky top-0 h-screen overflow-hidden">
 
-                {/* ── Zooming image (Hero-style: continuous scale 1→1.12 + 5% y drift) ── */}
-                <motion.img
+                {/* ── 100% Static Image ─────────────────────────────────────────── */}
+                <img
                     src={block.src}
                     alt={block.alt}
-                    className="absolute inset-0 w-full h-full object-cover object-center origin-center"
-                    style={{
-                        scale,
-                        y: yPercent,
-                    }}
+                    className="absolute inset-0 w-full h-full object-cover object-center"
                     loading={isFirst ? 'eager' : 'lazy'}
                     decoding="async"
                     fetchPriority={isFirst ? 'high' : 'auto'}
                 />
 
-                {/* ── Gradient vignette ──────────────────────────────────────── */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent z-10 pointer-events-none" />
+                {/* ── Original Overlay (B&N vs Color) ─────────────────────────── */}
+                {!block.isHope && <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply pointer-events-none" />}
+                {block.isHope && <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay pointer-events-none" />}
 
-                {/* ── Text card ─────────────────────────────────────────────── */}
-                <motion.div
-                    className="absolute bottom-[8%] left-[5%] z-20 max-w-[520px]"
-                    style={{ opacity: textOpacity }}
-                >
-                    {/* Label */}
-                    <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/40 mb-3">
-                        {block.label}
-                    </p>
+                {/* ── Gradient vignette for text readability ──────────────────── */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10 pointer-events-none" />
 
-                    {/* Description */}
-                    <div className={`border-l-4 ${block.accent} pl-6`}>
-                        <p className={`font-body text-2xl md:text-3xl leading-relaxed font-light text-white`}>
-                            {block.text}
-                        </p>
-                    </div>
+                {/* ── Original Text Cards (Stable & anchored) ─────────────────── */}
+                <div className="absolute bottom-[10%] left-[6%] z-20 w-full max-w-[550px] text-left flex flex-col justify-end">
 
-                    {/* Relatório button — Jurídica hope card only */}
-                    {block.showReport && (
-                        <button
-                            onClick={openReport}
-                            className="mt-8 flex items-center gap-4 bg-brand-navy/60 backdrop-blur-md border border-brand-cyan/30 rounded-xl p-4 w-[320px] text-left hover:bg-brand-navy/80 transition-colors group shadow-lg shadow-black/50 pointer-events-auto"
-                        >
-                            <div className="p-3 rounded-lg bg-brand-cyan/10">
-                                <FileText className="w-6 h-6 text-white" />
-                            </div>
-                            <div className="flex-1">
-                                <h4 className="text-brand-cyan text-sm font-bold uppercase tracking-widest mb-1">Relatório Técnico</h4>
-                                <p className="text-white/70 text-xs font-light italic leading-snug">Conheça os dados por trás da nossa luta pela dignidade no SUS.</p>
-                            </div>
-                            <ExternalLink className="w-4 h-4 text-brand-cyan/50 group-hover:text-brand-cyan transition-colors" />
-                        </button>
+                    {/* Realidade (BN) Text */}
+                    {!block.isHope && (
+                        <div>
+                            <h3 className="font-display text-9xl mb-6 tracking-tighter leading-none">
+                                <TitleSplit text={block.title} baseColor={block.titleColor} />
+                            </h3>
+                            <p className={`font-body text-3xl leading-relaxed tracking-normal text-left text-white border-l-4 ${block.accent} pl-8 font-light`}>
+                                {block.text}
+                            </p>
+                        </div>
                     )}
-                </motion.div>
+
+                    {/* Esperança (Color) Text */}
+                    {block.isHope && (
+                        <div>
+                            {block.showReport && (
+                                <button
+                                    onClick={openReport}
+                                    className="mb-8 pointer-events-auto flex items-center gap-4 bg-brand-navy/60 backdrop-blur-md border border-brand-cyan/30 rounded-xl p-4 w-[320px] text-left hover:bg-brand-navy/80 transition-colors group shadow-lg shadow-black/50"
+                                >
+                                    <div className="p-3 rounded-lg bg-brand-cyan/10">
+                                        <FileText className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h4 className="text-brand-cyan text-sm font-bold uppercase tracking-widest mb-1">Relatório Técnico</h4>
+                                        <p className="text-white/70 text-xs font-light italic leading-snug">Conheça os dados por trás da nossa luta pela dignidade no SUS.</p>
+                                    </div>
+                                    <ExternalLink className="w-4 h-4 text-brand-cyan/50 group-hover:text-brand-cyan transition-colors" />
+                                </button>
+                            )}
+                            <h3 className="font-display text-9xl mb-4 tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                                <TitleSplit text={block.title} baseColor={block.titleColor} />
+                            </h3>
+                            <div className="bg-brand-navy/50 backdrop-blur-md p-8 rounded-2xl border border-white/10 shadow-2xl">
+                                <p className={`font-body text-2xl leading-relaxed tracking-normal text-left text-white font-medium border-l-4 ${block.accent} pl-6`}>
+                                    {block.text}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </div>
 
                 {/* ── Scroll hint (first block only) ────────────────────────── */}
                 {isFirst && (
-                    <motion.div
-                        className="absolute bottom-8 right-8 z-20 flex flex-col items-center gap-1 pointer-events-none"
-                        style={{ opacity: useTransform(scrollYProgress, [0, 0.15], [1, 0]) }}
-                    >
+                    <div className="absolute bottom-8 right-8 z-20 flex flex-col items-center gap-1 pointer-events-none">
                         <motion.p
                             animate={{ opacity: [0.3, 1, 0.3] }}
                             transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
@@ -170,7 +180,7 @@ const ImageBlock = ({
                             transition={{ repeat: Infinity, duration: 2 }}
                             className="w-[2px] h-6 rounded-full bg-gradient-to-b from-brand-cyan to-transparent"
                         />
-                    </motion.div>
+                    </div>
                 )}
             </div>
         </div>
@@ -181,18 +191,34 @@ const ImageBlock = ({
 // MetamorphosisDesktop — main export
 // =============================================================================
 const MetamorphosisDesktop: React.FC = () => {
+    const containerRef = useRef<HTMLElement>(null);
+
+    // Track when this section enters the viewport to fade the button in.
+    // 'start end': top of section meets bottom of viewport (just starting to appear).
+    // 'start center': top of section reaches vertical center of viewport.
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ['start end', 'start center']
+    });
+
+    // Opacity: 0 when in Hero -> 1 when fully entered Metamorphosis
+    const buttonOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
     return (
-        <section className="relative w-full bg-black">
+        <section ref={containerRef} className="relative w-full bg-black">
 
-            {/* ── Fixed Cyan Button ─────────────────────────────────────────────
+            {/* ── Guarded Cyan Button ───────────────────────────────────────────
                 fixed top-4 right-6 — aligns vertically with DonationPillHeader pill.
-                z-[145]: above block images (z-10/20), below pill header (z-150).
+                Opacity strictly controlled by scrollYProgress to prevent Hero bleeding.
             ──────────────────────────────────────────────────────────────────── */}
-            <div className="fixed top-4 right-6 z-[145] pointer-events-auto">
+            <motion.div
+                style={{ opacity: buttonOpacity }}
+                className="fixed top-4 right-6 z-[145] pointer-events-auto"
+            >
                 <DonationButton variant="cyan" />
-            </div>
+            </motion.div>
 
-            {/* ── 6 autonomous image blocks (600vh × 6 = 3600vh total) ──────── */}
+            {/* ── 6 autonomous agile blocks (150vh × 6 = 900vh total) ──────── */}
             {BLOCKS.map((block, idx) => (
                 <ImageBlock
                     key={block.src}
