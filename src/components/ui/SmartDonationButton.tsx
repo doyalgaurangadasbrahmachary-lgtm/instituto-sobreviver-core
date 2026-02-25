@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { useView } from '../../context/ViewContext';
 
-const MP_LINK = 'https://link.mercadopago.com.br/sobreviver';
 
 interface SmartDonationButtonProps {
     /** If provided, overrides the default click behaviour (setView → donation).
