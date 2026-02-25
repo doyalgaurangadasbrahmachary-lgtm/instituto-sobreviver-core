@@ -1,53 +1,81 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
-// Module-level singleton — survives component remounts within the same browser session.
-// Once true, the component mounts directly in its final state (no animation re-plays).
-let hasImpactAnimatedGlobal = false;
+// ─── Singleton: survives component remounts in the same browser session ─────
+// Once ribbonAnimationCompleted = true, RibbonTitle will always mount in its
+// final "visible" state — no animation replay, no whileInView, no transition.
+let ribbonAnimationCompleted = false;
+
+// ─── Framer Motion variants ───────────────────────────────────────────────
+const h2Variants = {
+    hidden: { color: '#003366', scale: 1 },
+    visible: { color: '#00BFFF', scale: 1.15 },
+};
+
+const ribbonVariants = {
+    hidden: { clipPath: 'inset(0 100% 0 0)' },
+    visible: { clipPath: ['inset(0 100% 0 0)', 'inset(0 0 0 0)', 'inset(0 0 0 100%)'] },
+};
 
 const RibbonTitle = () => {
-    // Snapshot of global AT MOUNT TIME.
-    // true  → returning user: start in final state, transition duration:0, no visual replay.
-    // false → first visit:    start in initial state, whileInView plays the full animation.
-    const [isReturn] = useState(hasImpactAnimatedGlobal);
+    // Snapshot of singleton at mount time.
+    // true  → hasPlayed: component mounts directly in visible state — no animation.
+    // false → first visit: component plays the full entrance animation via whileInView.
+    const [hasPlayed, setHasPlayed] = useState(ribbonAnimationCompleted);
 
+    // ── BRANCH A: already played (return visit) ─────────────────────────
+    // Render static elements with visible-state values baked into initial.
+    // No motion animate / whileInView — zero risk of replay.
+    if (hasPlayed) {
+        return (
+            <div className="relative inline-block mb-4">
+                <h2 className="text-4xl font-bold relative z-0" style={{ color: '#00BFFF', scale: '1.15' }}>
+                    Nosso impacto
+                </h2>
+                {/* Ribbon already swept — permanently hidden */}
+                <div
+                    className="absolute inset-0 z-10 overflow-hidden pointer-events-none"
+                    style={{ clipPath: 'inset(0 0 0 100%)' }}
+                >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00BFFF] to-[#00BFFF] opacity-90" />
+                    <h2 className="text-4xl font-bold text-white relative z-20">Nosso impacto</h2>
+                </div>
+            </div>
+        );
+    }
+
+    // ── BRANCH B: first visit — animate normally ─────────────────────────
     return (
         <div className="relative inline-block mb-4">
             <motion.h2
                 className="text-4xl font-bold relative z-0"
-                // First visit:  dark navy (will transition to cyan via whileInView)
-                // Return visit: start cyan immediately
-                initial={{ color: isReturn ? '#00BFFF' : '#003366', scale: isReturn ? 1.15 : 1 }}
-                whileInView={{ color: '#00BFFF', scale: 1.15 }}
-                transition={isReturn ? { duration: 0 } : { delay: 1.8, duration: 0.5, ease: 'backOut' }}
+                variants={h2Variants}
+                initial="hidden"
+                whileInView="visible"
                 viewport={{ once: true, margin: '0px 0px -100px 0px' }}
-                // Mark the singleton as done the moment the viewport trigger fires
-                onViewportEnter={() => { hasImpactAnimatedGlobal = true; }}
+                transition={{ delay: 1.8, duration: 0.5, ease: 'backOut' }}
+                onAnimationComplete={(definition) => {
+                    // Lock the singleton only when the "visible" animation finishes
+                    if (definition === 'visible') {
+                        ribbonAnimationCompleted = true;
+                        setHasPlayed(true);
+                    }
+                }}
             >
                 Nosso impacto
             </motion.h2>
 
-            {/* Ribbon sweep — 3-step for first play, already hidden on return visits */}
-            {isReturn ? (
-                // Return visit: ribbon is permanently hidden — no element needed
-                <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none" style={{ clipPath: 'inset(0 0 0 100%)' }}>
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00BFFF] to-[#00BFFF] opacity-90"></div>
-                    <h2 className="text-4xl font-bold text-white relative z-20">Nosso impacto</h2>
-                </div>
-            ) : (
-                <motion.div
-                    className="absolute inset-0 z-10 overflow-hidden pointer-events-none"
-                    initial={{ clipPath: 'inset(0 100% 0 0)' }}
-                    whileInView={{ clipPath: ['inset(0 100% 0 0)', 'inset(0 0 0 0)', 'inset(0 0 0 100%)'] }}
-                    transition={{ duration: 1.8, ease: 'easeInOut' }}
-                    viewport={{ once: true, margin: '0px 0px -100px 0px' }}
-                >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00BFFF] to-[#00BFFF] opacity-90"></div>
-                    <h2 className="text-4xl font-bold text-white relative z-20">
-                        Nosso impacto
-                    </h2>
-                </motion.div>
-            )}
+            <motion.div
+                className="absolute inset-0 z-10 overflow-hidden pointer-events-none"
+                variants={ribbonVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '0px 0px -100px 0px' }}
+                transition={{ duration: 1.8, ease: 'easeInOut' }}
+            >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00BFFF] to-[#00BFFF] opacity-90" />
+                <h2 className="text-4xl font-bold text-white relative z-20">Nosso impacto</h2>
+            </motion.div>
         </div>
     );
 };
