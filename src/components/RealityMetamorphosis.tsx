@@ -377,8 +377,9 @@ const RealityMetamorphosis: React.FC = () => {
     if (isMobile) {
         return (
             <section id="reality-metamorphosis" className="relative w-full bg-black">
-                {/* Botón CTA — Spaceless Sticky: h-0 overflow-visible no impacta el flujo del documento */}
-                <div className="sticky top-4 z-[100] h-0 overflow-visible flex justify-center">
+                {/* Botão CTA — sticky dentro da seção móvel. mt-[40vh] garante que não aparece
+                     imediatamente, permitindo que o usuário veja o início da imagem B/N sin competición. */}
+                <div className="sticky top-20 z-[100] h-0 overflow-visible flex justify-center mt-[40vh]">
                     <div className="drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
                         <DonationButton variant="cyan" />
                     </div>
@@ -415,9 +416,19 @@ const RealityMetamorphosis: React.FC = () => {
         );
     }
 
-    // ─── RENDER DESKTOP (>= 768px) — lógica original con wrapper corregido ──
+    // ─── RENDER DESKTOP (>= 768px) ───
     return (
         <section id="reality-metamorphosis" ref={containerRef} className="relative w-full h-[900vh] bg-brand-navy">
+
+            {/* Botão Azul — filho direto da section (não do sticky container) para que sticky funcione.
+                 mt-[40vh]: o botão aparece só após 40% de scroll da seção (respira junto à imagem B/N).
+                 sticky top-24: sobe até ficar a 96px do topo (abaixo do PillHeader ~60px + gap).
+                 Quando o scroll esgota a altura da section (900vh), o botão para naturalmente. */}
+            <div className="sticky top-24 z-[100] flex justify-end pr-6 mt-[40vh] h-0 overflow-visible pointer-events-auto">
+                <div className="drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+                    <DonationButton variant="cyan" />
+                </div>
+            </div>
 
             <div className="sticky top-0 w-full h-screen overflow-hidden">
                 <div className="relative w-full h-full">
@@ -433,18 +444,14 @@ const RealityMetamorphosis: React.FC = () => {
                     ))}
                 </div>
 
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:top-6 md:right-6 z-[100] block pointer-events-auto">
-                    <DonationButton variant="cyan" />
-                </div>
-
                 <motion.div
                     style={{ opacity: scrollIndicatorOpacity }}
-                    className="absolute top-[88px] left-1/2 -translate-x-1/2 md:bottom-8 md:right-8 md:top-auto md:left-auto md:translate-x-0 z-[100] flex flex-col items-center gap-1 pointer-events-none"
+                    className="absolute bottom-8 right-8 z-[100] flex flex-col items-center gap-1 pointer-events-none"
                 >
                     <motion.p
                         animate={{ opacity: [0.3, 1, 0.3] }}
                         transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
-                        className="text-brand-cyan text-[10px] md:text-xs tracking-widest uppercase drop-shadow-md"
+                        className="text-brand-cyan text-xs tracking-widest uppercase drop-shadow-md"
                     >
                         Desliza para transformar
                     </motion.p>
