@@ -3,7 +3,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
-import { useDonation } from '../../context/DonationContext';
 
 interface DonationButtonProps {
     variant?: 'yellow' | 'cyan' | 'navy';
@@ -11,11 +10,6 @@ interface DonationButtonProps {
 }
 
 const DonationButton: React.FC<DonationButtonProps> = ({ variant = 'yellow', className = '' }) => {
-    const { openDonationModal } = useDonation();
-
-    const handleDonationClick = () => {
-        openDonationModal();
-    };
 
     // Configuración base de estilos por variante
     const variants = {
@@ -36,8 +30,10 @@ const DonationButton: React.FC<DonationButtonProps> = ({ variant = 'yellow', cla
     const selectedVariant = variants[variant];
 
     return (
-        <motion.button
-            onClick={handleDonationClick}
+        <motion.a
+            href="https://link.mercadopago.com.br/sobreviver"
+            target="_blank"
+            rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className={`
@@ -57,7 +53,7 @@ const DonationButton: React.FC<DonationButtonProps> = ({ variant = 'yellow', cla
                     w-5 h-5 fill-current transition-transform group-hover:scale-110
                 `}
             />
-        </motion.button>
+        </motion.a>
     );
 };
 

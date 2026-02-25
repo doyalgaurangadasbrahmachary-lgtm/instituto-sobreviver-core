@@ -11,6 +11,7 @@ import { ViewProvider, useView } from './context/ViewContext';
 import ImperativoDignidade from './components/imperativo/ImperativoDignidade';
 import Hero from './components/Hero';
 import DonationModal from './components/DonationModal';
+import DonationPillHeader from './components/ui/DonationPillHeader';
 
 // Home Components (converted from Next.js)
 import HomeHeader from './components/home/HomeHeader';
@@ -47,20 +48,7 @@ const AppContent = () => {
 
             {/* === VISTA DONATION: 100% viewport, portal completo === */}
             <Activity mode={view === 'donation' ? 'visible' : 'hidden'}>
-                {/* Floating back arrow — centered top */}
-                <button
-                    onClick={() => setView('home')}
-                    className="fixed top-6 right-6 md:right-auto md:left-1/2 md:transform md:-translate-x-1/2 z-[100] 
-                               p-3 bg-black/10 backdrop-blur-md rounded-full 
-                               shadow-md hover:bg-black/20 hover:scale-110
-                               transition-all duration-300 cursor-pointer
-                               border border-black/15 text-gray-700 hover:text-gray-900"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="m12 19-7-7 7-7" />
-                        <path d="M19 12H5" />
-                    </svg>
-                </button>
+                <DonationPillHeader onBack={() => setView('home')} />
                 <Hero />
                 <RealityMetamorphosis />
                 <Programs />
