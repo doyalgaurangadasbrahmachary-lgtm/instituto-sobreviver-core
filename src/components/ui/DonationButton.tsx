@@ -3,7 +3,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Heart } from 'lucide-react';
-import { useDonation } from '../../context/DonationContext';
+
+const MP_LINK = 'https://link.mercadopago.com.br/sobreviver';
 
 interface DonationButtonProps {
     variant?: 'yellow' | 'cyan' | 'navy';
@@ -11,13 +12,10 @@ interface DonationButtonProps {
 }
 
 const DonationButton: React.FC<DonationButtonProps> = ({ variant = 'yellow', className = '' }) => {
-    const { openDonationModal } = useDonation();
-
     const handleDonationClick = () => {
-        openDonationModal();
+        window.open(MP_LINK, '_blank', 'noopener,noreferrer');
     };
 
-    // Configuración base de estilos por variante
     const variants = {
         yellow: {
             base: "animate-[pulse-yellow_3s_infinite] border-brand-yellow text-brand-yellow",
