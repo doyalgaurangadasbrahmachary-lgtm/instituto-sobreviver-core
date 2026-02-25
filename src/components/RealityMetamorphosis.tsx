@@ -190,135 +190,123 @@ const DesktopSlideWrapper = ({
 };
 
 // =============================================================================
-// MOBILE: Sticky Scroll-Stasis (V9.1) — 300vh por bloque, useScroll nativo
-// Arquitectura: div contenedor 300vh + sticky h-screen + useScroll progress
-// Fases narrativas: B&N(0-15%) → REPOSO(15-45%) → FadeOut(45-50%)
-//                  → Color(50-85%) → REPOSO COLOR(85-100%)
+// MOBILE: Natural Flow V10 — min-h-screen, whileInView en padre, sin scroll-driven
+// Coreografía automática: IntersectionObserver dispara al 30% visible.
+// B&N = suelo estático. Color = clipPath 1.2s. Texto = slide-up 0.8s.
+// overflow:clip (no hidden) garantiza detección correcta del sensor.
 // =============================================================================
 
+// Variants del padre — vacío, solo propaga el trigger a los hijos
+const mobileSceneVariants = {
+    initial: {},
+    animate: {},
+};
+
+// Variants del color: círculo se expande en 1.2s con delay 0.4s
+const colorRevealVariants = {
+    initial: { clipPath: 'circle(0% at 50% 50%)' },
+    animate: {
+        clipPath: 'circle(150% at 50% 50%)',
+        transition: {
+            duration: 1.2,
+            delay: 0.4,
+            ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+        },
+    },
+};
+
+// Variants del texto: slide-up fade-in en 0.8s, sin delay
+const textRevealVariants = {
+    initial: { opacity: 0, y: 35 },
+    animate: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.8, delay: 0, ease: 'easeOut' as const },
+    },
+};
+
 const MobileMetamorphosisSection = ({ section }: { section: typeof SECTIONS[0] }) => {
-    const containerRef = useRef<HTMLDivElement>(null);
     const { openReport } = useView();
 
-    // Scroll progress del bloque completo (0 → 1 al recorrer los 300vh)
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ['start start', 'end end'],
-    });
-
-    // ── Fase 2: Texto del problema — umbral de aparición en el 30% ──────────
-    // Invisible 0→28%, entra 28→32%, reposo 32→43%, sale 43→50%
-    const textOpacity = useTransform(
-        scrollYProgress,
-        [0.28, 0.32, 0.43, 0.50],
-        [0, 1, 1, 0]
-    );
-    const textY = useTransform(scrollYProgress, [0.28, 0.32], [30, 0]);
-
-    // ── Fase 3: Revelado de color via clipPath (50% → 85%) ─────────────────
-    const clipPath = useTransform(
-        scrollYProgress,
-        [0.50, 0.85],
-        ['circle(0% at 50% 50%)', 'circle(150% at 50% 50%)']
-    );
-
-    // ── Fase 4: Texto de esperanza aparece con el color (80% → 92%) ─────────
-    const hopeOpacity = useTransform(scrollYProgress, [0.80, 0.92], [0, 1]);
-    const hopeY = useTransform(scrollYProgress, [0.80, 0.92], [20, 0]);
-
     return (
-        // Contenedor de 300vh — define el "tubo" de scroll de cada bloque
-        <div ref={containerRef} className="relative w-full" style={{ height: '300vh' }}>
-
-            {/* Sticky h-screen — el contenido permanece fijo mientras el usuario recorre los 300vh */}
-            {/* overflow:clip en lugar de overflow:hidden — no rompe sticky ni interfiere con IntersectionObserver */}
-            <div
-                className="sticky top-0 w-full h-screen"
-                style={{ overflow: 'clip', touchAction: 'pan-y' }}
-            >
-                {/* SUELO ESTÁTICO — Imagen B&N fija, sin animación, opacity 1 siempre */}
-                {/* Elimina el flash blanco: nunca habrá un fotograma sin fondo */}
-                <div className="absolute inset-0 z-0">
-                    <img
-                        src={section.imgBN.mobile}
-                        alt={`${section.title} B&N`}
-                        className="w-full h-full object-cover filter grayscale brightness-[1.15] contrast-[1.05]"
-                        loading="lazy"
-                        decoding="async"
-                        width={390}
-                        height={844}
-                    />
-                    <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply" />
-                </div>
-
-                {/* Fase 3 — Imagen Color (clipPath nace en 50% del scroll) */}
-                <motion.div className="absolute inset-0 z-10" style={{ clipPath }}>
-                    <img
-                        src={section.imgColor.mobile}
-                        alt={`${section.title} Color`}
-                        className="w-full h-full object-cover brightness-110 saturate-110"
-                        loading="lazy"
-                        decoding="async"
-                        width={390}
-                        height={844}
-                    />
-                    <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay" />
-                </motion.div>
-
-                {/* Gradiente de legibilidad (siempre activo) */}
-                <div className="absolute inset-0 z-20 pointer-events-none">
-                    <div className="absolute bottom-0 w-full h-[55vh] bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-                </div>
-
-                {/* Fase 1-2 — Texto del PROBLEMA (criticalText): entra con B&N, sale antes del color */}
-                <motion.div
-                    className="absolute bottom-[10%] left-[6%] w-[88%] z-30 pointer-events-none"
-                    style={{ opacity: textOpacity, y: textY }}
-                >
-                    <h3 className="font-display text-6xl font-bold mb-4 text-white tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)]">
-                        {section.title}
-                    </h3>
-                    <div className="bg-black/50 backdrop-blur-md p-5 rounded-2xl border border-white/10 shadow-2xl">
-                        <p className="font-body text-base leading-relaxed text-white/90 border-l-4 border-red-400/70 pl-5">
-                            {section.criticalText}
-                        </p>
-                    </div>
-                </motion.div>
-
-                {/* Fase 4 — Texto de ESPERANZA (hopeText): aparece con la imagen color */}
-                <motion.div
-                    className="absolute bottom-[10%] left-[6%] w-[88%] z-30 pointer-events-auto"
-                    style={{ opacity: hopeOpacity, y: hopeY }}
-                >
-                    <h3 className="font-display text-6xl font-bold mb-4 text-brand-cyan tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.6)]">
-                        {section.title}
-                    </h3>
-
-                    {section.id === 'juridica' && (
-                        <button
-                            onClick={openReport}
-                            className="mb-4 flex items-center gap-3 bg-brand-navy/60 backdrop-blur-sm border border-brand-cyan/30 rounded-lg p-3 w-[220px] text-left hover:bg-brand-navy/80 transition-colors group shadow-lg shadow-black/40 pointer-events-auto"
-                        >
-                            <div className="p-2 rounded-lg bg-brand-cyan/10">
-                                <FileText className="w-4 h-4 text-white" />
-                            </div>
-                            <div className="flex-1">
-                                <h4 className="text-brand-cyan text-[10px] font-bold uppercase tracking-wide mb-0.5">Relatório Técnico</h4>
-                                <p className="text-white/70 text-[9px] leading-tight line-clamp-1">Dados da nossa luta no SUS.</p>
-                            </div>
-                            <ExternalLink className="w-3 h-3 text-brand-cyan/50 group-hover:text-brand-cyan transition-colors" />
-                        </button>
-                    )}
-
-                    <div className="bg-brand-navy/65 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-2xl">
-                        <p className="font-body text-lg leading-relaxed text-white font-medium border-l-4 border-brand-cyan pl-5">
-                            {section.hopeText}
-                        </p>
-                    </div>
-                </motion.div>
-
+        // PADRE — sensor del IntersectionObserver (min-h-screen, sin overflow-hidden)
+        // overflow:clip recorta imágenes sin afectar al sensor de Framer Motion
+        <motion.div
+            className="relative w-full min-h-screen"
+            style={{ overflow: 'clip', touchAction: 'pan-y' }}
+            variants={mobileSceneVariants}
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, amount: 0.3 }}
+        >
+            {/* SUELO ESTÁTICO — B&N siempre visible desde el primer fotograma */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src={section.imgBN.mobile}
+                    alt={`${section.title} B&N`}
+                    className="w-full h-full object-cover filter grayscale brightness-[1.15] contrast-[1.05]"
+                    loading="lazy"
+                    decoding="async"
+                    width={390}
+                    height={844}
+                />
+                <div className="absolute inset-0 bg-brand-navy/40 mix-blend-multiply" />
             </div>
-        </div>
+
+            {/* COLOR — clipPath se expande al 1.2s después del trigger (delay 0.4s) */}
+            <motion.div
+                className="absolute inset-0 z-10"
+                variants={colorRevealVariants}
+            >
+                <img
+                    src={section.imgColor.mobile}
+                    alt={`${section.title} Color`}
+                    className="w-full h-full object-cover brightness-110 saturate-110"
+                    loading="lazy"
+                    decoding="async"
+                    width={390}
+                    height={844}
+                />
+                <div className="absolute inset-0 bg-brand-cyan/10 mix-blend-overlay" />
+            </motion.div>
+
+            {/* Gradiente de legibilidad — siempre activo */}
+            <div className="absolute inset-0 z-20 pointer-events-none">
+                <div className="absolute bottom-0 w-full h-[55vh] bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+            </div>
+
+            {/* TEXTO — slide-up en 0.8s al activarse el trigger */}
+            <motion.div
+                className="absolute bottom-[10%] left-[6%] w-[88%] z-30 pointer-events-auto"
+                variants={textRevealVariants}
+            >
+                <h3 className="font-display text-6xl font-bold mb-4 text-brand-cyan tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.6)]">
+                    {section.title}
+                </h3>
+
+                {section.id === 'juridica' && (
+                    <button
+                        onClick={openReport}
+                        className="mb-4 flex items-center gap-3 bg-brand-navy/60 backdrop-blur-sm border border-brand-cyan/30 rounded-lg p-3 w-[220px] text-left hover:bg-brand-navy/80 transition-colors group shadow-lg shadow-black/40"
+                    >
+                        <div className="p-2 rounded-lg bg-brand-cyan/10">
+                            <FileText className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="text-brand-cyan text-[10px] font-bold uppercase tracking-wide mb-0.5">Relatório Técnico</h4>
+                            <p className="text-white/70 text-[9px] leading-tight line-clamp-1">Dados da nossa luta no SUS.</p>
+                        </div>
+                        <ExternalLink className="w-3 h-3 text-brand-cyan/50 group-hover:text-brand-cyan transition-colors" />
+                    </button>
+                )}
+
+                <div className="bg-brand-navy/65 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-2xl">
+                    <p className="font-body text-lg leading-relaxed text-white font-medium border-l-4 border-brand-cyan pl-5">
+                        {section.hopeText}
+                    </p>
+                </div>
+            </motion.div>
+        </motion.div>
     );
 };
 
