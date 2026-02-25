@@ -7,6 +7,30 @@ import { useView } from '../context/ViewContext';
 import { FileText, ExternalLink } from 'lucide-react';
 import DonationButton from './ui/DonationButton';
 
+// --- HELPER: split «Parte A: Parte B» into weighted spans ---
+const TitleSplit = ({
+    text,
+    baseColor,
+    className = '',
+}: {
+    text: string;
+    baseColor: string; // e.g. 'text-brand-cyan' or 'text-white'
+    className?: string;
+}) => {
+    const colonIdx = text.indexOf(':');
+    if (colonIdx === -1) {
+        return <span className={`font-bold ${baseColor} ${className}`}>{text}</span>;
+    }
+    const partA = text.slice(0, colonIdx + 1); // includes the colon
+    const partB = text.slice(colonIdx + 1).trimStart();
+    return (
+        <>
+            <span className={`font-bold ${baseColor}`}>{partA}</span>
+            <span className={`block font-extralight ${baseColor}/80 mt-1`}>{partB}</span>
+        </>
+    );
+};
+
 // --- DATA ---
 const SECTIONS = [
     {
@@ -108,10 +132,10 @@ const MetamorphosisSlide = ({
                 <div className="absolute bottom-0 w-full h-[50vh] bg-gradient-to-t from-black/80 via-black/40 to-transparent z-0 pointer-events-none" />
                 <div className="absolute bottom-[12%] md:bottom-[10%] left-[6%] w-[88%] md:w-full max-w-[550px] z-10 text-left flex flex-col justify-end">
                     <motion.div style={{ opacity: opacityCritical, y: yCritical }} className="absolute bottom-0 left-0 w-full z-10">
-                        <h3 className="font-display text-6xl md:text-9xl font-bold mb-4 md:mb-6 text-white md:text-white/40 tracking-tighter leading-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] md:drop-shadow-none">
-                            {section.title}
+                        <h3 className="font-display text-6xl md:text-9xl mb-4 md:mb-6 tracking-tighter leading-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] md:drop-shadow-none">
+                            <TitleSplit text={section.title} baseColor="text-white md:text-white/40" />
                         </h3>
-                        <p className="font-body text-lg md:text-3xl leading-relaxed text-white border-l-4 border-red-500/50 pl-6 md:pl-8 font-light drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                        <p className="font-body text-lg md:text-3xl leading-relaxed tracking-normal text-left text-white border-l-4 border-red-500/50 pl-6 md:pl-8 font-light drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                             {section.criticalText}
                         </p>
                     </motion.div>
@@ -123,18 +147,18 @@ const MetamorphosisSlide = ({
                                     <FileText className="w-4 h-4 md:w-6 md:h-6 text-white" />
                                 </div>
                                 <div className="flex-1">
-                                    <h4 className="text-brand-cyan text-[10px] md:text-sm font-bold uppercase tracking-wide mb-0.5 md:mb-1">Relatório Técnico</h4>
-                                    <p className="text-white/70 text-[9px] md:text-xs leading-tight md:leading-snug hidden md:block">Conheça os dados por trás da nossa luta pela dignidade no SUS.</p>
-                                    <p className="text-white/70 text-[9px] md:hidden leading-tight line-clamp-1">Dados da nossa luta no SUS.</p>
+                                    <h4 className="text-brand-cyan text-[10px] md:text-sm font-bold uppercase tracking-widest mb-0.5 md:mb-1">Relatório Técnico</h4>
+                                    <p className="text-white/70 text-[9px] md:text-xs font-light italic leading-tight md:leading-snug hidden md:block">Conheça os dados por trás da nossa luta pela dignidade no SUS.</p>
+                                    <p className="text-white/70 text-[9px] font-light italic md:hidden leading-tight line-clamp-1">Dados da nossa luta no SUS.</p>
                                 </div>
                                 <ExternalLink className="w-3 h-3 md:w-4 md:h-4 text-brand-cyan/50 group-hover:text-brand-cyan transition-colors" />
                             </motion.button>
                         )}
-                        <h3 className="font-display text-6xl md:text-9xl font-bold mb-3 md:mb-4 text-brand-cyan tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
-                            {section.title}
+                        <h3 className="font-display text-6xl md:text-9xl mb-3 md:mb-4 tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                            <TitleSplit text={section.title} baseColor="text-brand-cyan" />
                         </h3>
                         <div className="bg-brand-navy/60 md:bg-brand-navy/50 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/10 shadow-2xl">
-                            <p className="font-body text-lg md:text-2xl leading-relaxed text-white font-medium border-l-4 border-brand-cyan pl-5 md:pl-6 text-shadow-sm">
+                            <p className="font-body text-lg md:text-2xl leading-relaxed tracking-normal text-left text-white font-medium border-l-4 border-brand-cyan/50 pl-5 md:pl-6 text-shadow-sm">
                                 {section.hopeText}
                             </p>
                         </div>
@@ -293,8 +317,8 @@ const MobileScrollBlock = ({
                 className="absolute bottom-[10%] left-[6%] w-[88%] z-20 pointer-events-auto"
                 style={{ opacity: textOpacity, y: locked ? 0 : textY }}
             >
-                <h3 className={`font-display text-6xl font-bold mb-4 ${titleColor} tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.7)]`}>
-                    {title}
+                <h3 className={`font-display text-6xl mb-4 tracking-tighter leading-none drop-shadow-[0_5px_15px_rgba(0,0,0,0.7)]`}>
+                    <TitleSplit text={title} baseColor={titleColor} />
                 </h3>
 
                 {showReportButton && (
@@ -306,15 +330,15 @@ const MobileScrollBlock = ({
                             <FileText className="w-4 h-4 text-white" />
                         </div>
                         <div className="flex-1">
-                            <h4 className="text-brand-cyan text-[10px] font-bold uppercase tracking-wide mb-0.5">Relatório Técnico</h4>
-                            <p className="text-white/70 text-[9px] leading-tight line-clamp-1">Dados da nossa luta no SUS.</p>
+                            <h4 className="text-brand-cyan text-[10px] font-bold uppercase tracking-widest mb-0.5">Relatório Técnico</h4>
+                            <p className="text-white/70 text-[9px] font-light italic leading-tight line-clamp-1">Dados da nossa luta no SUS.</p>
                         </div>
                         <ExternalLink className="w-3 h-3 text-brand-cyan/50 group-hover:text-brand-cyan transition-colors" />
                     </button>
                 )}
 
                 <div className={`${cardBg} backdrop-blur-md p-5 rounded-2xl border border-white/10 shadow-2xl`}>
-                    <p className={`font-body text-base leading-relaxed text-white/90 border-l-4 ${borderColor} pl-5`}>
+                    <p className={`font-body text-base leading-relaxed tracking-normal text-left text-white/90 border-l-4 ${borderColor}/50 pl-5`}>
                         {text}
                     </p>
                 </div>
@@ -367,7 +391,7 @@ const RealityMetamorphosis: React.FC = () => {
                         imgAlt={`${section.title} B&N`}
                         isGrayscale={true}
                         titleColor="text-white"
-                        borderColor="border-red-400/70"
+                        borderColor="border-red-400"
                         cardBg="bg-black/50"
                         title={section.title}
                         text={section.criticalText}
