@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface HomeQuemSomosModalProps {
     isOpen: boolean;
@@ -7,6 +8,7 @@ interface HomeQuemSomosModalProps {
 }
 
 export default function HomeQuemSomosModal({ isOpen, onClose }: HomeQuemSomosModalProps) {
+    // Scroll lock while modal is open
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -24,7 +26,11 @@ export default function HomeQuemSomosModal({ isOpen, onClose }: HomeQuemSomosMod
         };
     }, [isOpen]);
 
-    return (
+    // createPortal: renders directly into document.body, completely outside any
+    // GSAP ScrollTrigger pin-container (which applies transform and creates a
+    // new stacking context, breaking position:fixed children).
+    // z-[9999] guarantees supremacy over HomeHeader and DonationPillHeader (z-[150]).
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <>
@@ -34,7 +40,7 @@ export default function HomeQuemSomosModal({ isOpen, onClose }: HomeQuemSomosMod
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex justify-center items-center p-4 sm:p-6"
+                        className="fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] flex justify-center items-center p-4 sm:p-6"
                     >
                         {/* Modal Container */}
                         <motion.div
@@ -141,6 +147,7 @@ export default function HomeQuemSomosModal({ isOpen, onClose }: HomeQuemSomosMod
                     </motion.div>
                 </>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }
