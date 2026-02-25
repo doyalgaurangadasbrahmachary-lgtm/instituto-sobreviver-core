@@ -1,49 +1,53 @@
-import { motion, useInView } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 // Module-level singleton — survives component remounts within the same browser session.
-// Once set to true, the animation never plays again, even if the component unmounts/remounts.
+// Once true, the component mounts directly in its final state (no animation re-plays).
 let hasImpactAnimatedGlobal = false;
 
 const RibbonTitle = () => {
-    const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, { once: true, margin: '0px 0px -100px 0px' });
-
-    // isPreloaded: snapshot of global state AT MOUNT TIME.
-    // true = returning user → show final state instantly, no transition.
-    const [isPreloaded] = useState(hasImpactAnimatedGlobal);
-    const [hasAnimated, setHasAnimated] = useState(hasImpactAnimatedGlobal);
-
-    useEffect(() => {
-        if (isInView && !hasAnimated) {
-            setHasAnimated(true);
-            hasImpactAnimatedGlobal = true;
-        }
-    }, [isInView, hasAnimated]);
+    // Snapshot of global AT MOUNT TIME.
+    // true  → returning user: start in final state, transition duration:0, no visual replay.
+    // false → first visit:    start in initial state, whileInView plays the full animation.
+    const [isReturn] = useState(hasImpactAnimatedGlobal);
 
     return (
-        <div ref={ref} className="relative inline-block mb-4">
+        <div className="relative inline-block mb-4">
             <motion.h2
                 className="text-4xl font-bold relative z-0"
-                initial={{ color: isPreloaded ? '#00BFFF' : '#003366', scale: isPreloaded ? 1.15 : 1 }}
-                animate={{ color: hasAnimated ? '#00BFFF' : '#003366', scale: hasAnimated ? 1.15 : 1 }}
-                transition={isPreloaded ? { duration: 0 } : { delay: 1.8, duration: 0.5, ease: 'backOut' }}
+                // First visit:  dark navy (will transition to cyan via whileInView)
+                // Return visit: start cyan immediately
+                initial={{ color: isReturn ? '#00BFFF' : '#003366', scale: isReturn ? 1.15 : 1 }}
+                whileInView={{ color: '#00BFFF', scale: 1.15 }}
+                transition={isReturn ? { duration: 0 } : { delay: 1.8, duration: 0.5, ease: 'backOut' }}
+                viewport={{ once: true, margin: '0px 0px -100px 0px' }}
+                // Mark the singleton as done the moment the viewport trigger fires
+                onViewportEnter={() => { hasImpactAnimatedGlobal = true; }}
             >
                 Nosso impacto
             </motion.h2>
 
-            {/* Ribbon — Concept C: 2-step only. Final state = fully visible (inset 0 0 0 0). */}
-            <motion.div
-                className="absolute inset-0 z-10 overflow-hidden pointer-events-none"
-                initial={{ clipPath: isPreloaded ? 'inset(0 0 0 0)' : 'inset(0 100% 0 0)' }}
-                animate={{ clipPath: hasAnimated ? 'inset(0 0 0 0)' : 'inset(0 100% 0 0)' }}
-                transition={isPreloaded ? { duration: 0 } : { duration: 1.8, ease: 'easeInOut' }}
-            >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00BFFF] to-[#00BFFF] opacity-90"></div>
-                <h2 className="text-4xl font-bold text-white relative z-20">
-                    Nosso impacto
-                </h2>
-            </motion.div>
+            {/* Ribbon sweep — 3-step for first play, already hidden on return visits */}
+            {isReturn ? (
+                // Return visit: ribbon is permanently hidden — no element needed
+                <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none" style={{ clipPath: 'inset(0 0 0 100%)' }}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00BFFF] to-[#00BFFF] opacity-90"></div>
+                    <h2 className="text-4xl font-bold text-white relative z-20">Nosso impacto</h2>
+                </div>
+            ) : (
+                <motion.div
+                    className="absolute inset-0 z-10 overflow-hidden pointer-events-none"
+                    initial={{ clipPath: 'inset(0 100% 0 0)' }}
+                    whileInView={{ clipPath: ['inset(0 100% 0 0)', 'inset(0 0 0 0)', 'inset(0 0 0 100%)'] }}
+                    transition={{ duration: 1.8, ease: 'easeInOut' }}
+                    viewport={{ once: true, margin: '0px 0px -100px 0px' }}
+                >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00BFFF] to-[#00BFFF] opacity-90"></div>
+                    <h2 className="text-4xl font-bold text-white relative z-20">
+                        Nosso impacto
+                    </h2>
+                </motion.div>
+            )}
         </div>
     );
 };
