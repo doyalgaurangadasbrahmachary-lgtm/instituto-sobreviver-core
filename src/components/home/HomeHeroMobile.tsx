@@ -49,7 +49,7 @@ export default function HomeHeroMobile() {
 
                     // Sincronía Matemática 1-a-1 sin GSAP Animations paralelas:
                     gsap.set(logo, { opacity: p });
-                    gsap.set(uiContent, { y: `${p * 23}vh` });
+                    gsap.set(uiContent, { y: `${p * 8}vh` });
                 }
             });
         }
