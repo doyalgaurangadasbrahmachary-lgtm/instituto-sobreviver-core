@@ -160,7 +160,7 @@ const Hero: React.FC = () => {
                 className={`fixed md:hidden bottom-8 left-1/2 transform -translate-x-1/2 z-40 pointer-events-auto transition-all duration-500 w-full max-w-[340px] px-6 flex flex-col items-center gap-4 ${showButton ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}
             >
                 {/* Botón Selector de Método (Pix, Transferencia) con el tamaño del azul */}
-                <SmartDonationButton enableTooltip={true} className="w-full flex justify-center [&>button]:w-full [&>button]:justify-center" />
+                <SmartDonationButton onDonate={() => window.open('https://link.mercadopago.com.br/sobreviver', '_blank', 'noopener,noreferrer')} enableTooltip={true} className="w-full flex justify-center [&>button]:w-full [&>button]:justify-center" />
             </div>
 
             {/* CTA PC (Tradicional Abajo Derecha) */}
