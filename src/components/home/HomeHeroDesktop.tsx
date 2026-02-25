@@ -114,7 +114,7 @@ export default function HomeHeroDesktop() {
                         onClick={() => setIsModalOpen(true)}
                         className="px-8 py-3 bg-azure-vibrant text-bone rounded-full font-bold text-lg hover:bg-azure-deep hover:text-white transition-all transform hover:scale-105 shadow-lg text-center cursor-pointer"
                     >
-                        Nossa História
+                        Nossa história
                     </button>
                 </div>
 

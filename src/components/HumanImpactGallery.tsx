@@ -117,9 +117,9 @@ const HumanImpactGallery: React.FC = () => {
     return (
         <section ref={containerRef} className="w-full py-24 px-6 md:px-12 bg-white relative">
             <div className="max-w-7xl mx-auto mb-16 text-center">
-                <span className="text-brand-cyan font-bold tracking-widest uppercase text-sm">Nosso Impacto</span>
+                <span className="text-brand-cyan font-bold tracking-widest uppercase text-sm">Nosso impacto</span>
                 <h2 className="font-display text-4xl md:text-5xl text-brand-navy font-bold mt-2">
-                    Histórias de <span className="text-brand-cyan">Vida</span>
+                    Histórias de <span className="text-brand-cyan">vida</span>
                 </h2>
                 <p className="mt-4 text-brand-navy/70 max-w-2xl mx-auto font-body text-lg">
                     Cada imagem captura um momento de conexão humana, onde a dor se transforma em amor e companhia.

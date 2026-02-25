@@ -184,10 +184,10 @@ const Programs: React.FC = () => {
                 transition={{ duration: 0.8, ease: 'easeOut' }}
             >
                 <span className="text-brand-cyan font-bold tracking-widest uppercase text-sm">
-                    Onde o Estado Falha
+                    Onde o estado falha
                 </span>
                 <h2 className="font-display text-4xl md:text-5xl text-brand-navy font-bold mt-2">
-                    Sua Doação Resgata
+                    Sua doação resgata
                 </h2>
             </motion.div>
 

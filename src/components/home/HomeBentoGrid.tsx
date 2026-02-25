@@ -14,7 +14,7 @@ const RibbonTitle = () => {
                 }}
                 viewport={{ once: true, margin: "0px 0px -200px 0px" }}
             >
-                Nosso Impacto
+                Nosso impacto
             </motion.h2>
 
             <motion.div
@@ -28,7 +28,7 @@ const RibbonTitle = () => {
             >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00BFFF] to-[#00BFFF] opacity-90"></div>
                 <h2 className="text-4xl font-bold text-white relative z-20">
-                    Nosso Impacto
+                    Nosso impacto
                 </h2>
             </motion.div>
         </div>
@@ -60,7 +60,7 @@ export default function HomeBentoGrid() {
             id: 2,
             image: "/assets/brand/home/seccion2.2.png",
             title: "BLOQUEIO JUDICIAL DE R$384 MIL PARA TRATAMENTOS DE PACIENTES TERMINAIS",
-            subtitle: "370+ Pessoas Atendidas",
+            subtitle: "370+ pessoas atendidas",
             description: "Nos últimos dois anos, oferecendo suporte contínuo e humano.",
         }
     ];

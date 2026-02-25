@@ -3,19 +3,19 @@ import { useState, useEffect } from 'react';
 
 const services = [
     {
-        title: "Terapias Integrativas",
+        title: "Terapias integrativas",
         description: "Ozonioterapia, Acupuntura, Auriculoterapia, Reiki e Massoterapia para alívio da dor e bem-estar.",
         image: "/assets/brand/home/tarjeta1.png",
         className: "object-center"
     },
     {
-        title: "Suporte Profissional",
+        title: "Suporte profissional",
         description: "Equipe multidisciplinar com Psicologia e Suporte Jurídico para garantir direitos e saúde mental.",
         image: "/assets/brand/home/tarjeta2.png",
         className: "object-center"
     },
     {
-        title: "Atividades & Inclusão",
+        title: "Atividades & inclusão",
         description: "Aulas de Artes e eventos comunitários (Bazar, Feijuca) para integração social e angariação de fundos.",
         image: "/assets/brand/home/tarjeta3.png",
         className: "object-center"
